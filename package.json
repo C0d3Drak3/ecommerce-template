@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate --schema=src/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema=src/prisma/schema.prisma",
+    "prisma:studio": "prisma studio --schema=src/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
@@ -26,5 +29,8 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
   }
 }
