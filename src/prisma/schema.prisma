@@ -32,13 +32,16 @@ enum UserRole {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+ id          Int      @id @default(autoincrement())
   title       String
   description String
   imageUrl    String
   price       Float
   quantity    Int
   createdAt   DateTime @default(now())
+  stock       Int 
+  category    String
+  tags        String[]
 }
 
 model Cart {

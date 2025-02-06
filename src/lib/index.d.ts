@@ -2330,12 +2330,14 @@ export namespace Prisma {
     id: number | null
     price: number | null
     quantity: number | null
+    stock: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     id: number | null
     price: number | null
     quantity: number | null
+    stock: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -2346,6 +2348,8 @@ export namespace Prisma {
     price: number | null
     quantity: number | null
     createdAt: Date | null
+    stock: number | null
+    category: string | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -2356,6 +2360,8 @@ export namespace Prisma {
     price: number | null
     quantity: number | null
     createdAt: Date | null
+    stock: number | null
+    category: string | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -2366,6 +2372,9 @@ export namespace Prisma {
     price: number
     quantity: number
     createdAt: number
+    stock: number
+    category: number
+    tags: number
     _all: number
   }
 
@@ -2374,12 +2383,14 @@ export namespace Prisma {
     id?: true
     price?: true
     quantity?: true
+    stock?: true
   }
 
   export type ProductSumAggregateInputType = {
     id?: true
     price?: true
     quantity?: true
+    stock?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -2390,6 +2401,8 @@ export namespace Prisma {
     price?: true
     quantity?: true
     createdAt?: true
+    stock?: true
+    category?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -2400,6 +2413,8 @@ export namespace Prisma {
     price?: true
     quantity?: true
     createdAt?: true
+    stock?: true
+    category?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -2410,6 +2425,9 @@ export namespace Prisma {
     price?: true
     quantity?: true
     createdAt?: true
+    stock?: true
+    category?: true
+    tags?: true
     _all?: true
   }
 
@@ -2507,6 +2525,9 @@ export namespace Prisma {
     price: number
     quantity: number
     createdAt: Date
+    stock: number
+    category: string
+    tags: string[]
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -2536,6 +2557,9 @@ export namespace Prisma {
     price?: boolean
     quantity?: boolean
     createdAt?: boolean
+    stock?: boolean
+    category?: boolean
+    tags?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2546,6 +2570,9 @@ export namespace Prisma {
     price?: boolean
     quantity?: boolean
     createdAt?: boolean
+    stock?: boolean
+    category?: boolean
+    tags?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2556,6 +2583,9 @@ export namespace Prisma {
     price?: boolean
     quantity?: boolean
     createdAt?: boolean
+    stock?: boolean
+    category?: boolean
+    tags?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -2566,9 +2596,12 @@ export namespace Prisma {
     price?: boolean
     quantity?: boolean
     createdAt?: boolean
+    stock?: boolean
+    category?: boolean
+    tags?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "imageUrl" | "price" | "quantity" | "createdAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "imageUrl" | "price" | "quantity" | "createdAt" | "stock" | "category" | "tags", ExtArgs["result"]["product"]>
 
   export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Product"
@@ -2581,6 +2614,9 @@ export namespace Prisma {
       price: number
       quantity: number
       createdAt: Date
+      stock: number
+      category: string
+      tags: string[]
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -3011,6 +3047,9 @@ export namespace Prisma {
     readonly price: FieldRef<"Product", 'Float'>
     readonly quantity: FieldRef<"Product", 'Int'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
+    readonly stock: FieldRef<"Product", 'Int'>
+    readonly category: FieldRef<"Product", 'String'>
+    readonly tags: FieldRef<"Product", 'String[]'>
   }
     
 
@@ -5549,7 +5588,10 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     price: 'price',
     quantity: 'quantity',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    stock: 'stock',
+    category: 'category',
+    tags: 'tags'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -5769,6 +5811,9 @@ export namespace Prisma {
     price?: FloatFilter<"Product"> | number
     quantity?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    stock?: IntFilter<"Product"> | number
+    category?: StringFilter<"Product"> | string
+    tags?: StringNullableListFilter<"Product">
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -5779,6 +5824,9 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     createdAt?: SortOrder
+    stock?: SortOrder
+    category?: SortOrder
+    tags?: SortOrder
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -5792,6 +5840,9 @@ export namespace Prisma {
     price?: FloatFilter<"Product"> | number
     quantity?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
+    stock?: IntFilter<"Product"> | number
+    category?: StringFilter<"Product"> | string
+    tags?: StringNullableListFilter<"Product">
   }, "id">
 
   export type ProductOrderByWithAggregationInput = {
@@ -5802,6 +5853,9 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     createdAt?: SortOrder
+    stock?: SortOrder
+    category?: SortOrder
+    tags?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -5820,6 +5874,9 @@ export namespace Prisma {
     price?: FloatWithAggregatesFilter<"Product"> | number
     quantity?: IntWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    stock?: IntWithAggregatesFilter<"Product"> | number
+    category?: StringWithAggregatesFilter<"Product"> | string
+    tags?: StringNullableListFilter<"Product">
   }
 
   export type CartWhereInput = {
@@ -6006,6 +6063,9 @@ export namespace Prisma {
     price: number
     quantity: number
     createdAt?: Date | string
+    stock: number
+    category: string
+    tags?: ProductCreatetagsInput | string[]
   }
 
   export type ProductUncheckedCreateInput = {
@@ -6016,6 +6076,9 @@ export namespace Prisma {
     price: number
     quantity: number
     createdAt?: Date | string
+    stock: number
+    category: string
+    tags?: ProductCreatetagsInput | string[]
   }
 
   export type ProductUpdateInput = {
@@ -6025,6 +6088,9 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stock?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    tags?: ProductUpdatetagsInput | string[]
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -6035,6 +6101,9 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stock?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    tags?: ProductUpdatetagsInput | string[]
   }
 
   export type ProductCreateManyInput = {
@@ -6045,6 +6114,9 @@ export namespace Prisma {
     price: number
     quantity: number
     createdAt?: Date | string
+    stock: number
+    category: string
+    tags?: ProductCreatetagsInput | string[]
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -6054,6 +6126,9 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stock?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    tags?: ProductUpdatetagsInput | string[]
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -6064,6 +6139,9 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stock?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    tags?: ProductUpdatetagsInput | string[]
   }
 
   export type CartCreateInput = {
@@ -6326,6 +6404,14 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type ProductCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -6334,12 +6420,16 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     createdAt?: SortOrder
+    stock?: SortOrder
+    category?: SortOrder
+    tags?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
     id?: SortOrder
     price?: SortOrder
     quantity?: SortOrder
+    stock?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -6350,6 +6440,8 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     createdAt?: SortOrder
+    stock?: SortOrder
+    category?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -6360,12 +6452,15 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     createdAt?: SortOrder
+    stock?: SortOrder
+    category?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
     id?: SortOrder
     price?: SortOrder
     quantity?: SortOrder
+    stock?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -6593,12 +6688,21 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type ProductCreatetagsInput = {
+    set: string[]
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type ProductUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserCreateNestedOneWithoutCartInput = {
