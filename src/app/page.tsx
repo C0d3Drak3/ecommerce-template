@@ -1,7 +1,10 @@
 //import Image from "next/image";
-
 // app/page.tsx
-import ProductCard from "@/components/ProductCard";
+"use client";
+
+import { useState } from "react";
+import Wellcoming from "@/components/Wellcoming";
+import CardContainer from "@/components/CardContainer";
 
 const Home = async () => {
   // Simulación de fetch de productos
@@ -10,14 +13,20 @@ const Home = async () => {
     { id: 2, name: "Producto 2", price: 299.99, imageUrl: "/img2.jpg" },
   ];
 
+  const [searching, setSearching] = useState(false);
+
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Productos Destacados</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
-        ))}
-      </div>
+      <div className="h-10 bg-slate-500">ESTE DIV SERAN LOS FILTROS</div>
+      {searching ? (
+        <div className="h-10 bg-slate-500">
+          <CardContainer products={products} />
+        </div>
+      ) : (
+        <div>
+          <Wellcoming />
+        </div>
+      )}
     </div>
   );
 };
