@@ -12,7 +12,7 @@ type ProductProps = {
 const ProductCard = ({ id, name, price, imageUrl }: ProductProps) => {
   return (
     <Link href={`/product/${id}`} className="block">
-      <div className="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer">
+      <div className="bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300">
         <Image
           src={imageUrl}
           alt={name}

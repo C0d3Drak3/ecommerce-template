@@ -16,7 +16,7 @@ const Home = async () => {
   const [searching, setSearching] = useState(false);
 
   return (
-    <div className="p-8">
+    <div className=" bg-slate-300 p-8">
       <div className="h-10 bg-slate-500">ESTE DIV SERAN LOS FILTROS</div>
       {searching ? (
         <div className="h-10 bg-slate-500">
