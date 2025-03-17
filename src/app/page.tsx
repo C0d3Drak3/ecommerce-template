@@ -24,7 +24,7 @@ const Home = async () => {
         </div>
       ) : (
         <div>
-          <Wellcoming />
+          <Wellcoming products={products} />
         </div>
       )}
     </div>

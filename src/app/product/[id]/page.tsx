@@ -10,6 +10,7 @@ const ProductPage = () => {
 
   const { id } = params; // Ahora `id` se obtiene sin problemas
 
+  //Eso se reemplaza con un fetch de a la db de productos, buscnado el producto por id
   const product = {
     id,
     name: `Producto ${id}`,
