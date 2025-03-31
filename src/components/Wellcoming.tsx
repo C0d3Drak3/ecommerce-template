@@ -1,37 +1,53 @@
 //Componente renderizable cuando se llega a la pagina y no se esta buscando nada en especifico
 //Se renderiza un listado de productos destacados y otros productos que podrian interesar
-import React from "react";
-import ProductCard from "@/components/ProductCard";
+'use client';
+import React, { useMemo } from "react";
+import CardContainer from "./CardContainer";
 
 interface Product {
   id: number;
-  name: string;
+  title: string;
   price: number;
   imageUrl: string;
+  category: string;
+  description: string;
 }
 
-interface Wellcoming {
+interface WelcomingProps {
   products: Product[];
 }
-const Wellcoming: React.FC<Wellcoming> = ({ products }) => {
+
+const Welcoming: React.FC<WelcomingProps> = ({ products }) => {
+  // Usamos useMemo para mantener los mismos productos entre renders
+  const featuredProducts = useMemo(() => {
+    if (!products.length) return [];
+    // Usamos un índice fijo para mantener consistencia
+    const startIndex = 0;
+    return products.slice(startIndex, startIndex + 4);
+  }, [products]);
+
+  const recommendedProducts = useMemo(() => {
+    if (!products.length) return [];
+    // Usamos un índice fijo diferente para las recomendaciones
+    const startIndex = 4;
+    return products.slice(startIndex, startIndex + 4);
+  }, [products]);
+
   return (
-    <div className="bg-slate-400">
-      <h1 className="text-3xl font-bold mb-6">Productos Destacados</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
-        ))}
-      </div>
-      <h1 className="text-3xl font-bold mb-6">
-        Otros Productos que te podrian interesar
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
-        ))}
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <CardContainer 
+        products={featuredProducts} 
+        title="Productos Destacados" 
+      />
+      
+      <div className="my-12 border-t border-gray-200" />
+      
+      <CardContainer 
+        products={recommendedProducts} 
+        title="Otros Productos que te podrían interesar" 
+      />
     </div>
   );
 };
 
-export default Wellcoming;
+export default Welcoming;

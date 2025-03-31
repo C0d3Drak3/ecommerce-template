@@ -1,34 +1,34 @@
+'use client';
 import React from "react";
 import ProductCard from "./ProductCard";
 
 interface Product {
   id: number;
-  name: string;
+  title: string;
   price: number;
   imageUrl: string;
+  category: string;
+  description: string;
 }
 
 interface CardContainerProps {
   products: Product[];
+  title?: string;
 }
 
-const CardContainer: React.FC<CardContainerProps> = ({ products }) => {
+const CardContainer: React.FC<CardContainerProps> = ({ products, title }) => {
   return (
-    <div style={styles.container}>
-      {products.map((product) => (
-        <ProductCard key={product.id} {...product} />
-      ))}
+    <div className="py-8">
+      {title && (
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">{title}</h2>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard key={product.id} {...product} />
+        ))}
+      </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    gap: "16px",
-  } as React.CSSProperties,
 };
 
 export default CardContainer;
