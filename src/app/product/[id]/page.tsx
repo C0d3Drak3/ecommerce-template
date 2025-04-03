@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, use } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import ProductDetail from '@/components/ProductDetail';
 
 interface Product {
   id: number;
@@ -75,104 +75,5 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     );
   }
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Imagen del producto */}
-        <div className="relative h-96 md:h-[600px]">
-          <Image
-            src={product.imageUrl}
-            alt={product.title}
-            fill
-            className="rounded-lg object-cover"
-            priority
-          />
-        </div>
-
-        {/* Detalles del producto */}
-        <div className="space-y-6">
-          <div>
-            <p className="text-sm text-gray-500 uppercase">{product.category}</p>
-            <h1 className="text-3xl font-bold mt-1">{product.title}</h1>
-            <p className="text-gray-600 mt-2">{product.description}</p>
-          </div>
-
-          <div>
-            <p className="text-3xl font-bold text-blue-600">
-              ${product.price.toFixed(2)}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              Stock disponible: {product.stock || 0} unidades
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <label htmlFor="quantity" className="text-gray-700">
-                Cantidad:
-              </label>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  className="px-3 py-1 border rounded-md hover:bg-gray-100"
-                  disabled={quantity <= 1}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  id="quantity"
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value))}
-                  className="w-16 text-center border rounded-md py-1"
-                  min="1"
-                  max={product.stock}
-                />
-                <button
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                  className="px-3 py-1 border rounded-md hover:bg-gray-100"
-                  disabled={quantity >= (product.stock || 1)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <button 
-              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400"
-              disabled={!product.stock}
-            >
-              {product.stock ? 'Agregar al carrito' : 'Sin stock'}
-            </button>
-          </div>
-
-          {/* Información adicional */}
-          <div className="border-t pt-6 space-y-4">
-            {product.brand && (
-              <div>
-                <h3 className="font-semibold text-gray-900">Marca</h3>
-                <p className="text-gray-600">{product.brand}</p>
-              </div>
-            )}
-            
-            {product.tags && product.tags.length > 0 && (
-              <div>
-                <h3 className="font-semibold text-gray-900">Etiquetas</h3>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {product.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <ProductDetail product={product} quantity={quantity} onQuantityChange={handleQuantityChange} />;
 }
