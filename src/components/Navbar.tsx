@@ -1,3 +1,4 @@
+'use client';
 // components/Navbar.tsx
 const Navbar = () => {
   return (

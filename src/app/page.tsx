@@ -1,7 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Welcoming from '@/components/Wellcoming';
 import CardContainer from '@/components/CardContainer';
+import SearchFilters from '@/components/SearchFilters';
+import Pagination from '@/components/Pagination';
 
 interface Product {
   id: number;
@@ -10,44 +12,126 @@ interface Product {
   description: string;
   imageUrl: string;
   category: string;
+  tags: string[];
+}
+
+interface FilterState {
+  searchTerm: string;
+  category: string;
+  tag: string;
 }
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const productsPerPage = 20;
+
+  const handleSearch = useCallback(({ searchTerm, category, tag }: FilterState) => {
+    setIsSearching(true);
+    setCurrentPage(1);
+    
+    let filtered = [...products];
+
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(searchLower)
+      );
+    }
+
+    if (category) {
+      filtered = filtered.filter(product => product.category === category);
+    }
+
+    if (tag) {
+      filtered = filtered.filter(product => 
+        product.tags && product.tags.includes(tag)
+      );
+    }
+
+    setFilteredProducts(filtered);
+  }, [products]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchProducts = async () => {
       try {
-        console.log('🔍 Fetching products...');
+        setLoading(true);
+        setError(null);
+        
         const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+
         const data = await response.json();
         
+        if (!isMounted) return;
+
         if (!data.success) {
           throw new Error(data.message || 'Error al obtener productos');
         }
         
-        console.log('✅ Products received:', data.products.length);
-        setProducts(data.products);
+        if (!Array.isArray(data.products)) {
+          throw new Error('Formato de datos inválido');
+        }
+
+        const productsData = data.products;
+        
+        // Extraer categorías y tags únicos una sola vez
+        const uniqueCategories = Array.from(new Set(productsData.map((p: Product) => p.category))) as string[];
+        const uniqueTags = Array.from(new Set(productsData.flatMap((p: Product) => p.tags || []))) as string[];
+        
+        if (isMounted) {
+          setProducts(productsData);
+          setCategories(uniqueCategories);
+          setTags(uniqueTags);
+          setFilteredProducts([]); // Resetear productos filtrados
+          setIsSearching(false); // Resetear estado de búsqueda
+          setCurrentPage(1); // Resetear página
+        }
       } catch (error) {
-        console.error('❌ Error:', error);
-        setError(error instanceof Error ? error.message : 'Error desconocido');
+        if (isMounted) {
+          console.error('Error fetching products:', error);
+          setError(error instanceof Error ? error.message : 'Error desconocido');
+          setProducts([]);
+          setCategories([]);
+          setTags([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchProducts();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Solo se ejecuta una vez al montar el componente
+
+  // Calcular productos actuales basados en la página actual
+  const currentProducts = isSearching
+    ? filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
+    : [];
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center p-8">
-          <div className="text-2xl font-bold mb-2">Cargando productos...</div>
-          <div className="text-gray-500">Por favor espera</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="mb-2 text-lg">Cargando productos...</div>
+          <div className="text-sm text-gray-500">Por favor espera un momento</div>
         </div>
       </div>
     );
@@ -55,32 +139,57 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center p-8">
-          <div className="text-2xl font-bold text-red-600 mb-2">Error</div>
-          <div className="text-gray-700">{error}</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="text-xl text-red-600 mb-2">Error</div>
+          <div className="text-gray-600">{error}</div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Reintentar
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm mb-8">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          {/* Aquí irá el componente de filtros */}
-          <div className="h-10 bg-gray-100 rounded-lg">
-            ESTE DIV SERÁN LOS FILTROS
-          </div>
-        </div>
-      </div>
-
-      {isSearching ? (
-        <div className="max-w-7xl mx-auto px-4">
-          <CardContainer products={products} title="Resultados de búsqueda" />
-        </div>
-      ) : (
+    <main className="container mx-auto px-4 py-8">
+      <SearchFilters
+        onSearch={handleSearch}
+        categories={categories}
+        tags={tags}
+      />
+      
+      <div className={isSearching ? 'hidden' : 'block'}>
         <Welcoming products={products} />
+      </div>
+      
+      {isSearching && filteredProducts.length > 0 && (
+        <div className="mt-8">
+          <CardContainer products={currentProducts} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
+
+      {isSearching && filteredProducts.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-600">No se encontraron productos que coincidan con tu búsqueda.</p>
+          <button 
+            onClick={() => {
+              setIsSearching(false);
+              setFilteredProducts([]);
+            }} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Volver al inicio
+          </button>
+        </div>
       )}
     </main>
   );
