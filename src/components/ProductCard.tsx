@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from 'next/navigation';
 
 type ProductProps = {
   id: number;
@@ -12,12 +13,14 @@ type ProductProps = {
 };
 
 const ProductCard = ({ id, title, price, imageUrl, category }: ProductProps) => {
+  const searchParams = useSearchParams();
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
   return (
     <Link 
-      href={`/product/${id}`} 
+      href={`/product/${id}?back=${encodeURIComponent(currentUrl)}`} 
       className="block bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300"
     >
       <div className="relative h-48 mb-4 bg-gray-100 rounded-md overflow-hidden">

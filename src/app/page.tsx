@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Welcoming from '@/components/Wellcoming';
 import CardContainer from '@/components/CardContainer';
 import SearchFilters from '@/components/SearchFilters';
@@ -22,6 +23,8 @@ interface FilterState {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,30 +36,51 @@ export default function Home() {
   const productsPerPage = 20;
 
   const handleSearch = useCallback(({ searchTerm, category, tag }: FilterState) => {
-    setIsSearching(true);
-    setCurrentPage(1);
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (category) params.set('category', category);
+    if (tag) params.set('tag', tag);
     
-    let filtered = [...products];
+    const newUrl = params.toString() ? `/?${params.toString()}` : '/';
+    router.push(newUrl);
+  }, [router]);
 
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(searchLower)
-      );
+  // Effect to handle URL parameters and browser navigation
+  // Effect to apply filters when products are loaded or URL changes
+  useEffect(() => {
+    if (products.length > 0) {
+      const search = searchParams.get('search') || '';
+      const category = searchParams.get('category') || '';
+      const tag = searchParams.get('tag') || '';
+      
+      if (search || category || tag) {
+        let filtered = [...products];
+
+        if (search) {
+          const searchLower = search.toLowerCase();
+          filtered = filtered.filter(product => 
+            product.title.toLowerCase().includes(searchLower)
+          );
+        }
+
+        if (category) {
+          filtered = filtered.filter(product => product.category === category);
+        }
+
+        if (tag) {
+          filtered = filtered.filter(product => 
+            product.tags && product.tags.includes(tag)
+          );
+        }
+
+        setIsSearching(true);
+        setFilteredProducts(filtered);
+      } else {
+        setIsSearching(false);
+        setFilteredProducts([]);
+      }
     }
-
-    if (category) {
-      filtered = filtered.filter(product => product.category === category);
-    }
-
-    if (tag) {
-      filtered = filtered.filter(product => 
-        product.tags && product.tags.includes(tag)
-      );
-    }
-
-    setFilteredProducts(filtered);
-  }, [products]);
+  }, [products, searchParams]);
 
   useEffect(() => {
     let isMounted = true;
