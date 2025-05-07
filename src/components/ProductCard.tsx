@@ -1,7 +1,7 @@
 'use client';
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 type ProductProps = {
@@ -15,49 +15,56 @@ type ProductProps = {
 const ProductCard = ({ id, title, price, imageUrl, category }: ProductProps) => {
   const searchParams = useSearchParams();
   const currentUrl = `${window.location.pathname}${window.location.search}`;
-  const [imageLoading, setImageLoading] = useState(true);
-  const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // Simplificar la carga de imagen
+  const handleImageLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleImageError = () => {
+    setIsLoading(false);
+    setHasError(true);
+  };
 
   return (
-    <Link 
-      href={`/product/${id}?back=${encodeURIComponent(currentUrl)}`} 
-      className="block bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300"
-    >
+    <div className="block bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300">
+      <Link 
+        href={`/product/${id}?back=${encodeURIComponent(currentUrl)}`}
+        className="block"
+        prefetch={false}
+      >
       <div className="relative h-48 mb-4 bg-gray-100 rounded-md overflow-hidden">
-        {/* Placeholder mientras carga */}
-        {imageLoading && !imageError && (
-          <div className="absolute inset-0 flex items-center justify-center">
+        {/* Placeholder de carga */}
+        {isLoading && !hasError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
             <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
-        {/* Placeholder en caso de error */}
-        {imageError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="text-gray-400 text-sm text-center p-4">
-              Imagen no disponible
-            </div>
+        {/* Placeholder de error */}
+        {hasError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+            <span className="text-gray-400">Error al cargar</span>
           </div>
         )}
 
-        {/* Imagen real */}
-        <Image
-          src={imageUrl}
-          alt={title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className={`rounded-md object-cover transition-opacity duration-300 ${
-            imageLoading || imageError ? 'opacity-0' : 'opacity-100'
-          }`}
-          loading="lazy"
-          quality={60}
-          onLoadingComplete={() => setImageLoading(false)}
-          onError={() => {
-            setImageLoading(false);
-            setImageError(true);
-          }}
-          priority={false}
-        />
+        {/* Imagen */}
+        <div className="relative w-full h-full">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="300px"
+            className={`object-contain transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+            quality={25}
+            onLoadingComplete={handleImageLoad}
+            onError={handleImageError}
+            loading="lazy"
+            unoptimized
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -68,7 +75,8 @@ const ProductCard = ({ id, title, price, imageUrl, category }: ProductProps) => 
           Ver detalles
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
