@@ -9,10 +9,11 @@ type ProductProps = {
   title: string;
   price: number;
   imageUrl: string;
+  thumbnailUrl: string;
   category: string;
 };
 
-const ProductCard = ({ id, title, price, imageUrl, category }: ProductProps) => {
+const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: ProductProps) => {
   const searchParams = useSearchParams();
   const currentUrl = `${window.location.pathname}${window.location.search}`;
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +54,7 @@ const ProductCard = ({ id, title, price, imageUrl, category }: ProductProps) => 
         {/* Imagen */}
         <div className="relative w-full h-full">
           <Image
-            src={imageUrl}
+            src={thumbnailUrl}
             alt={title}
             fill
             sizes="300px"

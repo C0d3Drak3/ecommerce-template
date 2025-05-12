@@ -2,6 +2,7 @@
 'use client';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 interface Product {
   id: number;
@@ -45,12 +46,26 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         {/* Imagen del producto */}
         <div className="relative h-96 md:h-[600px] group">
           <div className="absolute inset-0 bg-gray-100 rounded-xl shadow-lg">
+            {/* Spinner de carga */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-50 rounded-xl transition-opacity duration-300">
+              <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
             <Image
               src={product.imageUrl}
               alt={product.title}
               fill
               className="rounded-xl object-cover transition-transform duration-300 group-hover:scale-105"
               priority
+              onLoadingComplete={(img) => {
+                // Cuando la imagen se carga, ocultamos el spinner
+                const spinner = img.parentElement?.querySelector('div');
+                if (spinner) {
+                  spinner.style.opacity = '0';
+                  setTimeout(() => {
+                    spinner.style.display = 'none';
+                  }, 300);
+                }
+              }}
             />
           </div>
         </div>

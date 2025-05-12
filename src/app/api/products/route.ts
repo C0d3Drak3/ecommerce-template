@@ -9,8 +9,14 @@ export async function GET() {
         id: 'asc'
       }
     });
+    
+    // Mapear los productos para convertir el campo thumbnail a thumbnailUrl
+    const mappedProducts = products.map(product => ({
+      ...product,
+      thumbnailUrl: product.thumbnail
+    }));
     console.log(`✅ Productos encontrados: ${products.length}`);
-    return NextResponse.json({ success: true, products });
+    return NextResponse.json({ success: true, products: mappedProducts });
   } catch (error) {
     console.error('❌ Error detallado:', error);
     return NextResponse.json(
