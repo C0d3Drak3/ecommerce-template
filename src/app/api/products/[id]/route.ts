@@ -28,7 +28,15 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, product });
+    // Mapear el producto y validar las URLs de las imágenes
+    const mappedProduct = {
+      ...product,
+      thumbnailUrl: product.thumbnail,
+      // Validar que la URL de la imagen sea válida
+      imageUrl: product.imageUrl.startsWith('http') ? product.imageUrl : null
+    };
+
+    return NextResponse.json({ success: true, product: mappedProduct });
   } catch (error) {
     console.error('Error al obtener el producto:', error);
     return NextResponse.json(
