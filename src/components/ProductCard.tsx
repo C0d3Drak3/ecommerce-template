@@ -30,13 +30,13 @@ const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: Pro
   };
 
   return (
-    <div className="block bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300">
+    <div className="flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 w-full h-[400px]">
       <Link 
         href={`/product/${id}?back=${encodeURIComponent(currentUrl)}`}
         className="block"
         prefetch={false}
       >
-      <div className="relative h-48 mb-4 bg-gray-100 rounded-md overflow-hidden">
+      <div className="relative h-48 mb-4 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
         {/* Placeholder de carga */}
         {isLoading && !hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
@@ -68,12 +68,16 @@ const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: Pro
         </div>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm text-gray-500 capitalize">{category}</p>
-        <h3 className="text-lg font-semibold line-clamp-2">{title}</h3>
-        <p className="text-xl font-bold text-blue-600">${price.toFixed(2)}</p>
-        <div className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center">
-          Ver detalles
+      <div className="flex flex-col justify-between flex-grow min-h-0">
+        <div className="space-y-2 flex-shrink overflow-hidden">
+          <p className="text-sm text-gray-500 capitalize truncate">{category}</p>
+          <h3 className="text-lg font-semibold line-clamp-2 min-h-[3.5rem]">{title}</h3>
+          <p className="text-xl font-bold text-blue-600">${price.toFixed(2)}</p>
+        </div>
+        <div className="mt-auto pt-4 ">
+          <div className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center">
+            Ver detalles
+          </div>
         </div>
       </div>
       </Link>
