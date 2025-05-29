@@ -49,6 +49,13 @@ export async function GET(request: Request) {
         id: {
           in: productIds
         }
+      },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        imageUrl: true,
+        thumbnail: true
       }
     });
 

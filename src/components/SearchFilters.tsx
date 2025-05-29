@@ -40,7 +40,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, categories, tag
             id="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="p-2 border text-gray-400 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             placeholder="Nombre del producto..."
           />
         </div>
@@ -54,7 +54,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, categories, tag
             id="category"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="p-2 border text-gray-400 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Todas las categorías</option>
             {categories.map((category) => (
@@ -74,7 +74,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, categories, tag
             id="tag"
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="p-2 border text-gray-400 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Todos los tags</option>
             {tags.map((tag) => (

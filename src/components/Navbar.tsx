@@ -3,54 +3,17 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
+import CartModal from './CartModal';
 
-interface User {
-  name: string;
-  email: string;
-}
-
-const Navbar = () => {
-  const [cartCount, setCartCount] = useState(0);
+function NavbarContent() {
   const router = useRouter();
   const { user, isLoading, logout } = useAuth();
-
-  useEffect(() => {
-    const getCartCount = async () => {
-      if (!user) {
-        setCartCount(0);
-        return;
-      }
-
-      console.log('Obteniendo cantidad del carrito...');
-      try {
-        const res = await fetch('/api/cart/count');
-        const data = await res.json();
-        console.log('Respuesta del carrito:', data);
-        
-        if (data.success) {
-          setCartCount(data.count);
-        }
-      } catch (error) {
-        console.error('Error getting cart count:', error);
-        setCartCount(0);
-      }
-    };
-
-    getCartCount();
-
-    // Actualizar el carrito cada 30 segundos si hay un usuario
-    const interval = setInterval(() => {
-      if (user) getCartCount();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [user]);
+  const { items, openModal } = useCart();
 
   const handleLogout = async () => {
-    console.log('Iniciando cierre de sesión...');
     try {
       await logout();
-      setCartCount(0);
       router.push('/');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -79,17 +42,17 @@ const Navbar = () => {
             </div>
           ) : user ? (
             <>
-              <Link 
-                href="/cart" 
+              <button 
+                onClick={openModal}
                 className="relative bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors"
               >
                 Carrito
-                {cartCount > 0 && (
+                {items.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                    {cartCount}
+                    {items.length}
                   </span>
                 )}
-              </Link>
+              </button>
               <Link 
                 href="/account" 
                 className="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors"
@@ -123,6 +86,13 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
+}
 
-export default Navbar;
+export default function Navbar() {
+  return (
+    <>
+      <NavbarContent />
+      <CartModal />
+    </>
+  );
+}

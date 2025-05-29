@@ -71,7 +71,7 @@ const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: Pro
       <div className="flex flex-col justify-between flex-grow min-h-0">
         <div className="space-y-2 flex-shrink overflow-hidden">
           <p className="text-sm text-gray-500 capitalize truncate">{category}</p>
-          <h3 className="text-lg font-semibold line-clamp-2 min-h-[3.5rem]">{title}</h3>
+          <h3 className="text-lg font-semibold line-clamp-2 min-h-[3.5rem] text-gray-950">{title}</h3>
           <p className="text-xl font-bold text-blue-600">${price.toFixed(2)}</p>
         </div>
         <div className="mt-auto pt-4 ">

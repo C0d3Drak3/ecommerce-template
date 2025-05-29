@@ -77,7 +77,7 @@ export default function AccountPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Mi Cuenta</h2>
+        <h2 className="text-2xl text-gray-800 font-bold mb-4">Mi Cuenta</h2>
         {user && (
           <div className="space-y-4">
             <p><span className="font-semibold">Nombre:</span> {user.name}</p>
@@ -87,7 +87,7 @@ export default function AccountPage() {
       </div>
 
       <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-xl font-bold mb-6">Historial de Compras</h3>
+        <h3 className="text-xl text-gray-600 font-bold mb-6">Historial de Compras</h3>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}

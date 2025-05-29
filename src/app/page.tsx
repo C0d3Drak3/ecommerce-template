@@ -180,7 +180,7 @@ export default function Home() {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 bg-gray-600">
       <SearchFilters
         onSearch={handleSearch}
         categories={categories}
