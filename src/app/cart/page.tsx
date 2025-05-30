@@ -8,7 +8,7 @@ import Image from 'next/image';
 export default function CartPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { items, removeFromCart, updateQuantity } = useCart();
+  const { items, removeFromCart, updateQuantity, refreshCart } = useCart();
 
   useEffect(() => {
     if (!user) {
@@ -19,8 +19,43 @@ export default function CartPage() {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    // TODO: Implementar lógica de checkout
-    console.log('Procesando checkout...');
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Mostrar mensaje de éxito
+        const message = document.createElement('div');
+        message.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-500 translate-y-0';
+        message.textContent = '¡Pedido realizado con éxito!';
+        document.body.appendChild(message);
+
+        // Remover mensaje después de 3 segundos
+        setTimeout(() => {
+          message.style.transform = 'translateY(200%)';
+          setTimeout(() => {
+            document.body.removeChild(message);
+          }, 500);
+        }, 3000);
+
+        // Actualizar el estado del carrito
+        await refreshCart();
+        
+        // Redirigir a la página principal
+        router.replace('/');
+      } else {
+        throw new Error(data.message || 'Error al procesar el pedido');
+      }
+    } catch (error) {
+      console.error('Error en checkout:', error);
+      alert('Error al procesar el pedido. Por favor, intente nuevamente.');
+    }
   };
 
   if (!user) {
