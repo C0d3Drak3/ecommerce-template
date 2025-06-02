@@ -53,12 +53,22 @@ function NavbarContent() {
                   </span>
                 )}
               </button>
-              <Link 
-                href="/account" 
-                className="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors"
-              >
-                Mi Cuenta
-              </Link>
+              <div className="flex items-center gap-4">
+                {user.role === 'ADMIN' && (
+                  <Link
+                    href="/admin"
+                    className="text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Panel Admin
+                  </Link>
+                )}
+                <Link
+                  href="/account"
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  Mi Cuenta
+                </Link>
+              </div>
               <button
                 onClick={handleLogout}
                 className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition-colors"
