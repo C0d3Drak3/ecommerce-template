@@ -31,6 +31,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
   const [previewThumbnail, setPreviewThumbnail] = useState('');
   const [imageError, setImageError] = useState(false);
   const [thumbnailError, setThumbnailError] = useState(false);
+  const [priceError, setPriceError] = useState('');
   
   // Componente de imagen segura que maneja errores
   const SafeImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
@@ -90,8 +91,22 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
     }
   };
 
+  const handlePriceBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value && !/^\d+\.\d{2}$/.test(value)) {
+      setPriceError('El precio debe tener exactamente 2 decimales (ej: 9.99)');
+    } else {
+      setPriceError('');
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Limpiar el error de precio si el usuario está editando
+    if (name === 'price' && priceError) {
+      setPriceError('');
+    }
     
     if (name === 'tags') {
       setFormData(prev => ({
@@ -183,7 +198,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.title}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
           </div>
 
@@ -198,7 +213,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.brand}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
           </div>
 
@@ -208,15 +223,17 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               Precio
             </label>
             <input
-              type="number"
+              type="text"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              required
-              min="0"
-              step="0.01"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              onBlur={handlePriceBlur}
+              placeholder="0.00"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
+            {priceError && (
+              <p className="mt-1 text-sm text-red-600">{priceError}</p>
+            )}
           </div>
 
           {/* Stock */}
@@ -231,7 +248,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               onChange={handleChange}
               required
               min="0"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
           </div>
 
@@ -246,7 +263,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.category}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
           </div>
 
@@ -261,7 +278,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.tags.join(', ')}
               onChange={handleChange}
               placeholder="ej: electrónica, gadgets, nuevo"
-              className="mt-1 block w-full rounded-md border-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
           </div>
         </div>
@@ -277,7 +294,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
             onChange={handleChange}
             required
             rows={4}
-            className="mt-1 block w-full rounded-md border-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
           />
         </div>
 
@@ -293,7 +310,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.imageUrl}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-600"
             />
             <div className="mt-2 relative h-40 w-full border rounded-md overflow-hidden">
               {previewImage ? (
@@ -325,7 +342,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
               value={formData.thumbnail}
               onChange={handleChange}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-600 border-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             <div className="mt-2 relative h-40 w-full border rounded-md overflow-hidden">
               {previewThumbnail ? (
@@ -362,10 +379,8 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
           </button>
           <button
             type="submit"
-            disabled={isLoading}
-            className={`bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors ${
-              isLoading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            disabled={isLoading || !!priceError}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${priceError ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isLoading ? 'Guardando...' : mode === 'create' ? 'Crear Producto' : 'Guardar Cambios'}
           </button>
