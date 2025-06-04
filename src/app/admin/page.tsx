@@ -29,7 +29,7 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Gestión de Productos */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Gestión de Productos</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Gestión de Productos</h2>
           <div className="space-y-4">
             <button
               onClick={() => router.push('/admin/products')}
@@ -48,7 +48,7 @@ export default function AdminPage() {
 
         {/* Gestión de Promociones */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Promociones</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Promociones</h2>
           <div className="space-y-4">
             <button
               onClick={() => router.push('/admin/promotions')}
@@ -61,7 +61,7 @@ export default function AdminPage() {
 
         {/* Estadísticas */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Estadísticas</h2>
           <div className="space-y-4">
             <button
               onClick={() => router.push('/admin/stats')}

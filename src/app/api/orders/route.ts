@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     const cartItems = cart.items as { productId: number; quantity: number }[];
     const productIds = cartItems.map(item => item.productId);
 
-    // Obtener los productos
+    // Obtener los productos con su stock actual
     const products = await prisma.product.findMany({
       where: {
         id: {
@@ -54,9 +54,24 @@ export async function POST(request: Request) {
         title: true,
         price: true,
         imageUrl: true,
-        thumbnail: true
+        thumbnail: true,
+        stock: true
       }
     });
+
+    // Verificar stock disponible
+    for (const cartItem of cartItems) {
+      const product = products.find(p => p.id === cartItem.productId);
+      if (!product) {
+        throw new Error(`Producto con ID ${cartItem.productId} no encontrado`);
+      }
+      if ((product.stock || 0) < cartItem.quantity) {
+        return NextResponse.json({
+          success: false,
+          message: `No hay suficiente stock para el producto: ${product.title}`
+        }, { status: 400 });
+      }
+    }
 
     // Calcular el total y crear el objeto de items para la transacción
     const items = cartItems.map(cartItem => {
@@ -80,6 +95,18 @@ export async function POST(request: Request) {
         total: total
       }
     });
+
+    // Actualizar el stock de los productos
+    for (const cartItem of cartItems) {
+      await prisma.product.update({
+        where: { id: cartItem.productId },
+        data: {
+          stock: {
+            decrement: cartItem.quantity
+          }
+        }
+      });
+    }
 
     // Limpiar el carrito
     await prisma.cart.update({
