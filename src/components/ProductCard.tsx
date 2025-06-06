@@ -8,12 +8,13 @@ type ProductProps = {
   id: number;
   title: string;
   price: number;
+  discountPercentage?: number;
   imageUrl: string;
   thumbnailUrl: string;
   category: string;
 };
 
-const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: ProductProps) => {
+const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnailUrl, category }: ProductProps) => {
   const searchParams = useSearchParams();
   const currentUrl = `${window.location.pathname}${window.location.search}`;
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +73,17 @@ const ProductCard = ({ id, title, price, imageUrl, thumbnailUrl, category }: Pro
         <div className="space-y-2 flex-shrink overflow-hidden">
           <p className="text-sm text-gray-500 capitalize truncate">{category}</p>
           <h3 className="text-lg font-semibold line-clamp-2 min-h-[3.5rem] text-gray-950">{title}</h3>
-          <p className="text-xl font-bold text-blue-600">${price.toFixed(2)}</p>
+          <div className="mt-2">
+            {discountPercentage && discountPercentage > 0 ? (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 line-through">${price.toFixed(2)}</span>
+                <span className="text-red-600 font-bold">${(price * (1 - (discountPercentage / 100))).toFixed(2)}</span>
+                <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">-{discountPercentage}%</span>
+              </div>
+            ) : (
+              <span className="text-gray-900 font-medium">${price.toFixed(2)}</span>
+            )}
+          </div>
         </div>
         <div className="mt-auto pt-4 ">
           <div className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center">

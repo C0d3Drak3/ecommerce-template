@@ -6,10 +6,12 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  discountPercentage?: number;
   imageUrl: string;
   thumbnailUrl: string;
   category: string;
   description: string;
+  tags?: string[];
 }
 
 interface CardContainerProps {

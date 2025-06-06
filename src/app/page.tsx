@@ -10,6 +10,7 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  discountPercentage?: number;
   description: string;
   imageUrl: string;
   thumbnailUrl: string;

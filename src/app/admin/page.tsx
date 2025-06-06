@@ -51,10 +51,16 @@ export default function AdminPage() {
           <h2 className="text-xl font-semibold mb-4 text-gray-800">Promociones</h2>
           <div className="space-y-4">
             <button
+              onClick={() => router.push('/admin/sales')}
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
+            >
+              Gestionar Descuentos
+            </button>
+            <button
               onClick={() => router.push('/admin/promotions')}
               className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
             >
-              Gestionar Promociones
+              Crear Promoción
             </button>
           </div>
         </div>
