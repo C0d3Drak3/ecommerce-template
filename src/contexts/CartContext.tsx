@@ -6,6 +6,7 @@ interface CartItem {
   id: number;
   title: string;
   price: number;
+  discountPercentage?: number;
   imageUrl: string;
   thumbnail: string;
   quantity: number;
@@ -35,10 +36,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const response = await fetch('/api/cart');
+      // Agregar un parámetro de caché único para evitar caché del navegador
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/cart?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       const data = await response.json();
 
       if (data.success) {
+        console.log('Carrito actualizado:', data.items);
         setItems(data.items);
       }
     } catch (error) {

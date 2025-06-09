@@ -35,7 +35,16 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [showOnlyDiscounted, setShowOnlyDiscounted] = useState(false);
   const productsPerPage = 20;
+  
+  // Filtrar productos con descuento
+  const discountedProducts = products.filter(product => 
+    product.discountPercentage && product.discountPercentage > 0
+  );
+  
+  // Tomar solo los primeros 4 productos con descuento para mostrar en la sección destacada
+  const featuredDiscountedProducts = discountedProducts.slice(0, 4);
 
   const handleSearch = useCallback(({ searchTerm, category, tag }: FilterState) => {
     const params = new URLSearchParams();
@@ -54,8 +63,11 @@ export default function Home() {
       const search = searchParams.get('search') || '';
       const category = searchParams.get('category') || '';
       const tag = searchParams.get('tag') || '';
+      const discounted = searchParams.get('discounted') === 'true';
       
-      if (search || category || tag) {
+      setShowOnlyDiscounted(discounted);
+      
+      if (search || category || tag || discounted) {
         let filtered = [...products];
 
         if (search) {
@@ -72,6 +84,12 @@ export default function Home() {
         if (tag) {
           filtered = filtered.filter(product => 
             product.tags && product.tags.includes(tag)
+          );
+        }
+        
+        if (discounted) {
+          filtered = filtered.filter(product => 
+            product.discountPercentage && product.discountPercentage > 0
           );
         }
 
@@ -150,6 +168,27 @@ export default function Home() {
     ? filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
     : [];
 
+  // Mostrar mensaje cuando no hay productos con descuento
+  if (showOnlyDiscounted && filteredProducts.length === 0) {
+    return (
+      <main className="container mx-auto px-4 py-8 bg-gray-600 min-h-[60vh]">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-white mb-4">No hay productos en descuento en este momento</h2>
+          <p className="text-gray-300 mb-6">Pronto tendremos nuevas ofertas especiales para ti.</p>
+          <button 
+            onClick={() => {
+              setShowOnlyDiscounted(false);
+              router.push('/');
+            }}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Ver todos los productos
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (loading) {
@@ -190,6 +229,29 @@ export default function Home() {
       
       <div className={isSearching ? 'hidden' : 'block'}>
         <Welcoming products={products} />
+        
+        {/* Sección de productos en descuento */}
+        {featuredDiscountedProducts.length > 0 && (
+          <div className="mt-12">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">🔥 Ofertas Especiales</h2>
+              <button 
+                onClick={() => {
+                  // Filtrar solo productos con descuento
+                  const params = new URLSearchParams();
+                  params.set('discounted', 'true');
+                  router.push(`/?${params.toString()}`);
+                }}
+                className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+              >
+                Ver todos los descuentos →
+              </button>
+            </div>
+            <CardContainer 
+              products={featuredDiscountedProducts} 
+            />
+          </div>
+        )}
       </div>
       
       {isSearching && filteredProducts.length > 0 && (

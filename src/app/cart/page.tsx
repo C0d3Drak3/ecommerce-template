@@ -16,7 +16,18 @@ export default function CartPage() {
     }
   }, [user, router]);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const calculateItemPrice = (item: any) => {
+    return item.discountPercentage && item.discountPercentage > 0 
+      ? item.price * (1 - item.discountPercentage / 100)
+      : item.price;
+  };
+
+  const subtotal = items.reduce((sum, item) => {
+    const itemPrice = calculateItemPrice(item);
+    return sum + itemPrice * item.quantity;
+  }, 0);
+
+  const total = subtotal; // Aquí podrías agregar impuestos, envío, etc. si es necesario
 
   const handleCheckout = async () => {
     try {
@@ -104,9 +115,25 @@ export default function CartPage() {
                       <h3 className="text-lg font-medium text-gray-900">
                         {item.title}
                       </h3>
-                      <p className="text-xl font-bold text-blue-600 mt-1">
-                        ${item.price.toFixed(2)}
-                      </p>
+                      <div className="space-y-1">
+                        {item.discountPercentage && item.discountPercentage > 0 ? (
+                          <>
+                            <p className="text-xl font-bold text-blue-600">
+                              ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
+                              <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-1.5 py-0.5 rounded">
+                                -{item.discountPercentage}%
+                              </span>
+                            </p>
+                            <p className="text-gray-500 text-sm line-through">
+                              ${item.price.toFixed(2)}
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-xl font-bold text-blue-600">
+                            ${item.price.toFixed(2)}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <button
                       onClick={() => removeFromCart(item.id)}
@@ -171,9 +198,16 @@ export default function CartPage() {
                       </svg>
                     </button>
 
-                    <span className="ml-auto text-lg font-medium text-gray-950">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </span>
+                    <div className="ml-auto text-right">
+                      <p className="text-lg font-medium text-gray-950">
+                        ${(calculateItemPrice(item) * item.quantity).toFixed(2)}
+                      </p>
+                      {item.discountPercentage && item.discountPercentage > 0 && (
+                        <p className="text-sm text-gray-500 line-through">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -186,17 +220,41 @@ export default function CartPage() {
               <h2 className="text-xl font-semibold mb-4 text-gray-950">Resumen de la Orden</h2>
 
               <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>${total.toFixed(2)}</span>
+                <div className="space-y-2">
+                  {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
+                    <div className="bg-yellow-50 p-3 rounded-md mb-2">
+                      <p className="text-sm text-yellow-700">
+                        ¡Aprovechaste descuentos en tu compra!
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} productos)</span>
+                    <span>${items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}</span>
+                  </div>
+                  {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Descuentos</span>
+                      <span>-${(items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - subtotal).toFixed(2)}</span>
+                    </div>
+                  )}
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Envío</span>
-                  <span>Gratis</span>
-                </div>
-                <div className="border-t pt-3 flex justify-between text-lg font-semibold text-gray-950">
-                  <span>Total</span>
-                  <span className="text-blue-600">${total.toFixed(2)}</span>
+                <div className="border-t pt-3 space-y-3">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Envío</span>
+                    <span>Gratis</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-semibold text-gray-950">
+                    <span>Total</span>
+                    <div className="text-right">
+                      <p className="text-blue-600">${subtotal.toFixed(2)}</p>
+                      {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
+                        <p className="text-xs text-gray-500">
+                          Ahorraste ${(items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - subtotal).toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

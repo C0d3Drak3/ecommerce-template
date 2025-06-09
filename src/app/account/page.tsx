@@ -4,18 +4,22 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+interface TransactionItem {
+  id: number;
+  title: string;
+  price: number;
+  discountPercentage: number;
+  discountedPrice: number;
+  quantity: number;
+  thumbnail: string;
+  subtotal: number;
+}
+
 interface Transaction {
   id: number;
   total: number;
   createdAt: string;
-  items: Array<{
-    id: number;
-    title: string;
-    price: number;
-    quantity: number;
-    thumbnail: string;
-    subtotal: number;
-  }>;
+  items: TransactionItem[];
 }
 
 export default function AccountPage() {
@@ -144,14 +148,35 @@ export default function AccountPage() {
                         <h3 className="font-medium text-gray-900 truncate">
                           {item.title}
                         </h3>
-                        <p className="text-sm text-gray-600">
-                          {item.quantity} x ${item.price.toFixed(2)}
-                        </p>
+                        <div className="space-y-1">
+                          {item.discountPercentage > 0 ? (
+                            <>
+                              <p className="text-sm text-gray-600">
+                                {item.quantity} x ${item.discountedPrice.toFixed(2)}
+                                <span className="ml-1 bg-red-100 text-red-800 text-xs font-medium px-1.5 py-0.5 rounded">
+                                  -{item.discountPercentage}%
+                                </span>
+                              </p>
+                              <p className="text-xs text-gray-400 line-through">
+                                ${item.price.toFixed(2)} c/u
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-gray-600">
+                              {item.quantity} x ${item.price.toFixed(2)}
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-gray-900">
                           ${item.subtotal.toFixed(2)}
                         </p>
+                        {item.discountPercentage > 0 && (
+                          <p className="text-xs text-green-600">
+                            Ahorraste ${((item.price * item.quantity) - item.subtotal).toFixed(2)}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}

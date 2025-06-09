@@ -53,6 +53,7 @@ export async function POST(request: Request) {
         id: true,
         title: true,
         price: true,
+        discountPercentage: true,
         imageUrl: true,
         thumbnail: true,
         stock: true
@@ -78,10 +79,21 @@ export async function POST(request: Request) {
       const product = products.find(p => p.id === cartItem.productId);
       if (!product) throw new Error('Producto no encontrado');
       
+      const price = product.discountPercentage && product.discountPercentage > 0
+        ? product.price * (1 - product.discountPercentage / 100)
+        : product.price;
+      
+      const subtotal = price * cartItem.quantity;
+      
       return {
-        ...product,
+        id: product.id,
+        title: product.title,
+        price: product.price, // Precio original
+        discountPercentage: product.discountPercentage || 0,
+        discountedPrice: price, // Precio con descuento aplicado
         quantity: cartItem.quantity,
-        subtotal: product.price * cartItem.quantity
+        thumbnail: product.thumbnail,
+        subtotal: subtotal
       };
     });
 

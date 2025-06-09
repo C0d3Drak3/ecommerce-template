@@ -26,7 +26,12 @@ export default function CartModal() {
 
   if (!isModalOpen) return null;
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = items.reduce((sum, item) => {
+    const itemPrice = item.discountPercentage && item.discountPercentage > 0 
+      ? item.price * (1 - item.discountPercentage / 100) 
+      : item.price;
+    return sum + itemPrice * item.quantity;
+  }, 0);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
@@ -85,9 +90,25 @@ export default function CartModal() {
                     <h3 className="font-medium text-gray-900 truncate">
                       {item.title}
                     </h3>
-                    <p className="text-blue-600 font-semibold">
-                      ${item.price.toFixed(2)}
-                    </p>
+                    <div className="space-y-1">
+                      {item.discountPercentage && item.discountPercentage > 0 ? (
+                        <>
+                          <p className="text-blue-600 font-semibold">
+                            ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
+                            <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-1.5 py-0.5 rounded">
+                              -{item.discountPercentage}%
+                            </span>
+                          </p>
+                          <p className="text-gray-500 text-sm line-through">
+                            ${item.price.toFixed(2)}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-blue-600 font-semibold">
+                          ${item.price.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
                     
                     {/* Controles */}
                     <div className="flex items-center gap-2 mt-2">

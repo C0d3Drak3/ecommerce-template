@@ -54,6 +54,7 @@ export async function GET(request: Request) {
         id: true,
         title: true,
         price: true,
+        discountPercentage: true,
         imageUrl: true,
         thumbnail: true
       }
