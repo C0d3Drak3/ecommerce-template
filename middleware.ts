@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
+import { prisma } from '@/lib/prisma';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Rutas que requieren autenticación
-const protectedRoutes = ['/cart', '/account'];
+const protectedRoutes = ['/cart', '/account', '/admin'];
+
+// Rutas que requieren rol de administrador
+const adminRoutes = ['/admin'];
 
 export async function middleware(request: NextRequest) {
   console.log('Middleware ejecutándose para:', request.nextUrl.pathname);
@@ -19,8 +23,11 @@ export async function middleware(request: NextRequest) {
   console.log('Token encontrado en middleware:', !!token);
   const path = request.nextUrl.pathname;
 
-  // Verificar si la ruta requiere autenticación
-  if (protectedRoutes.some(route => path.startsWith(route))) {
+  // Verificar si la ruta requiere autenticación o es de administración
+  const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+  const isAdminRoute = adminRoutes.some(route => path.startsWith(route));
+  
+  if (isProtectedRoute || isAdminRoute) {
     if (!token) {
       console.log('No hay token, redirigiendo a login');
       // Redirigir a login si no hay token
@@ -39,7 +46,20 @@ export async function middleware(request: NextRequest) {
       
       console.log('Token válido para usuario:', payload.userId);
       
-      // Si el token es válido, permitir el acceso
+      // Si es una ruta de administración, verificar el rol en la base de datos
+      if (isAdminRoute) {
+        const user = await prisma.user.findUnique({
+          where: { id: payload.userId as number },
+          select: { role: true }
+        });
+        
+        if (!user || user.role !== 'ADMIN') {
+          console.log('Acceso denegado: se requiere rol de administrador');
+          return NextResponse.redirect(new URL('/', request.url));
+        }
+      }
+      
+      // Si el token es válido y tiene los permisos necesarios, permitir el acceso
       const response = NextResponse.next();
       return response;
     } catch (error) {
@@ -55,5 +75,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cart/:path*', '/account/:path*']
+  matcher: ['/cart/:path*', '/account/:path*', '/admin/:path*']
 };

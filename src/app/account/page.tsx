@@ -23,17 +23,21 @@ interface Transaction {
 }
 
 export default function AccountPage() {
-  const { user, logout } = useAuth();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    // Solo verificar la autenticación después de que se haya completado la carga inicial
+    if (!authLoading && !user) {
+      router.push('/login?redirect=/account');
       return;
     }
+
+    // Solo obtener transacciones si el usuario está autenticado
+    if (!user) return;
 
     const fetchTransactions = async () => {
       try {
@@ -56,6 +60,16 @@ export default function AccountPage() {
     fetchTransactions();
   }, [user, router]);
 
+  // Mostrar carga mientras se verifica la autenticación o se cargan las transacciones
+  if (authLoading || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Redirigir si no hay usuario (ya debería manejarse en el efecto)
   if (!user) {
     return null;
   }

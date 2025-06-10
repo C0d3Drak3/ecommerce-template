@@ -4,21 +4,33 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function AdminPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    if (!isLoading && !user) {
+      // Solo redirigir si ya se completó la carga y no hay usuario
+      router.push('/login?redirect=/admin');
       return;
     }
     
-    if (user.role !== 'ADMIN') {
+    if (!isLoading && user && user.role !== 'ADMIN') {
+      // Solo redirigir si ya se completó la carga y el usuario no es admin
       router.push('/');
     }
-  }, [user, router]);
+  }, [user, isLoading, router]);
 
-  if (!user || user.role !== 'ADMIN') {
+  // Mostrar carga mientras se verifica la autenticación
+  if (isLoading || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Verificar rol de administrador después de la carga
+  if (user.role !== 'ADMIN') {
     return null;
   }
 

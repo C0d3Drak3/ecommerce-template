@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -7,14 +7,22 @@ import Image from 'next/image';
 
 export default function CartPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { items, removeFromCart, updateQuantity, refreshCart } = useCart();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    // Solo verificar la autenticación después de que se haya completado la carga inicial
+    if (!authLoading && !user) {
+      router.push('/login?redirect=/cart');
+      return;
     }
-  }, [user, router]);
+    
+    // Actualizar el estado de carga una vez que se completa la verificación
+    if (!authLoading) {
+      setIsLoading(false);
+    }
+  }, [user, router, authLoading]);
 
   const calculateItemPrice = (item: any) => {
     return item.discountPercentage && item.discountPercentage > 0 
@@ -69,6 +77,16 @@ export default function CartPage() {
     }
   };
 
+  // Mostrar carga mientras se verifica la autenticación
+  if (authLoading || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Redirigir si no hay usuario (ya debería manejarse en el efecto)
   if (!user) {
     return null;
   }
