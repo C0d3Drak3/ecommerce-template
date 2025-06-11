@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
+import ShippingBanner from '@/components/ShippingBanner';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,8 +34,11 @@ export default function RootLayout({
       >
         <AuthProvider>
           <CartProvider>
+            <ShippingBanner />
             <Navbar />
-            {children}
+            <main className="min-h-[calc(100vh-64px)]">
+              {children}
+            </main>
           </CartProvider>
         </AuthProvider>
       </body>

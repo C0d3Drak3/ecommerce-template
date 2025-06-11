@@ -8,15 +8,23 @@ interface Product {
   title: string;
   description: string;
   price: number;
+  discountPercentage?: number;
   imageUrl: string;
+  thumbnailUrl: string;
   category: string;
   stock: number;
   brand: string;
   tags: string[];
 }
 
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+// Definir el tipo para los parámetros
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function ProductPage({ params }: PageProps) {
+  // Usar use para resolver la promesa de params
+  const { id } = use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +33,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${resolvedParams.id}`);
+        const response = await fetch(`/api/products/${id}`);
         const data = await response.json();
 
         if (!data.success) {
@@ -42,13 +50,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     };
 
     fetchProduct();
-  }, [resolvedParams.id]);
+  }, [id]);
 
-  const handleQuantityChange = (value: number) => {
-    if (product && value >= 1 && value <= (product.stock || 1)) {
-      setQuantity(value);
-    }
-  };
+  // Eliminamos handleQuantityChange ya que se maneja internamente en ProductDetail
 
   if (loading) {
     return (
@@ -75,5 +79,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     );
   }
 
-  return <ProductDetail product={product} quantity={quantity} onQuantityChange={handleQuantityChange} />;
+  // Pasar solo el producto como prop, ya que el manejo de cantidad está dentro de ProductDetail
+  return <ProductDetail product={product} />;
 }

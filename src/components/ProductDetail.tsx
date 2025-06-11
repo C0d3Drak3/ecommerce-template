@@ -99,15 +99,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }: ProductDetailP
                     <span className="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded">
                       -{product.discountPercentage}%
                     </span>
+                    
+                    {/* Indicador de stock bajo */}
+                    {product.stock > 0 && product.stock <= 5 && (
+                      <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center">
+                        <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
+                        ¡Solo quedan {product.stock} {product.stock === 1 ? 'unidad' : 'unidades'}!
+                      </span>
+                    )}
                   </div>
                   <p className="text-gray-500 line-through">
                     ${product.price.toFixed(2)}
                   </p>
                 </div>
               ) : (
-                <p className="text-4xl font-bold text-blue-600">
-                  ${product.price.toFixed(2)}
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${product.price.toFixed(2)}
+                  </p>
+                  
+                  {/* Indicador de stock bajo para productos sin descuento */}
+                  {product.stock > 0 && product.stock <= 5 && (
+                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center">
+                      <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
+                      ¡Solo quedan {product.stock} {product.stock === 1 ? 'unidad' : 'unidades'}!
+                    </span>
+                  )}
+                </div>
               )}
               <p className="text-sm text-gray-600 mt-2 flex items-center">
                 <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
