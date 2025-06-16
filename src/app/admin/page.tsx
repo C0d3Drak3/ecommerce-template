@@ -2,6 +2,13 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// Importación dinámica para SSR
+const LowStockAlerts = dynamic(
+  () => import('@/components/admin/LowStockAlerts'),
+  { ssr: false }
+);
 
 export default function AdminPage() {
   const { user, isLoading } = useAuth();
@@ -36,7 +43,15 @@ export default function AdminPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
+      <h1 className="text-3xl font-bold mb-6">Panel de Administración</h1>
+      
+      {/* Sección de Alertas */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Alertas</h2>
+        <LowStockAlerts />
+      </div>
+      
+      <h2 className="text-2xl font-semibold mb-6">Herramientas</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Gestión de Productos */}
