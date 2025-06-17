@@ -1,9 +1,11 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Welcoming from '@/components/Wellcoming';
 import CardContainer from '@/components/CardContainer';
 import SearchFilters from '@/components/SearchFilters';
+import AdvancedFilters from '@/components/AdvancedFilters';
 import Pagination from '@/components/Pagination';
 
 interface Product {
@@ -38,6 +40,21 @@ export default function Home() {
   const [showOnlyDiscounted, setShowOnlyDiscounted] = useState(false);
   const productsPerPage = 20;
   
+  // Estados para filtros avanzados
+  const [advancedFilters, setAdvancedFilters] = useState({
+    minPrice: 0,
+    maxPrice: 1000,
+    selectedCategories: [] as string[],
+    selectedTags: [] as string[],
+    onlyDiscounted: false
+  });
+  
+  // Calcular precio máximo de los productos
+  const maxPrice = useMemo(() => {
+    if (products.length === 0) return 1000;
+    return Math.ceil(Math.max(...products.map(p => p.price)) * 1.1); // 10% más que el precio más alto
+  }, [products]);
+  
   // Filtrar productos con descuento
   const discountedProducts = products.filter(product => 
     product.discountPercentage && product.discountPercentage > 0
@@ -57,7 +74,7 @@ export default function Home() {
   }, [router]);
 
   // Effect to handle URL parameters and browser navigation
-  // Effect to apply filters when products are loaded or URL changes
+  // Effect to apply filters when products are loaded, URL changes, or advanced filters change
   useEffect(() => {
     if (products.length > 0) {
       const search = searchParams.get('search') || '';
@@ -65,42 +82,72 @@ export default function Home() {
       const tag = searchParams.get('tag') || '';
       const discounted = searchParams.get('discounted') === 'true';
       
-      setShowOnlyDiscounted(discounted);
+      // Actualizar estados de búsqueda básica
+      setShowOnlyDiscounted(discounted || advancedFilters.onlyDiscounted);
       
-      if (search || category || tag || discounted) {
-        let filtered = [...products];
+      // Aplicar todos los filtros
+      let filtered = [...products];
+      let hasActiveFilters = false;
 
-        if (search) {
-          const searchLower = search.toLowerCase();
-          filtered = filtered.filter(product => 
-            product.title.toLowerCase().includes(searchLower)
-          );
-        }
-
-        if (category) {
-          filtered = filtered.filter(product => product.category === category);
-        }
-
-        if (tag) {
-          filtered = filtered.filter(product => 
-            product.tags && product.tags.includes(tag)
-          );
-        }
-        
-        if (discounted) {
-          filtered = filtered.filter(product => 
-            product.discountPercentage && product.discountPercentage > 0
-          );
-        }
-
-        setIsSearching(true);
-        setFilteredProducts(filtered);
-      } else {
-        setIsSearching(false);
-        setFilteredProducts([]);
+      // Aplicar filtros de búsqueda básica
+      if (search) {
+        const searchLower = search.toLowerCase();
+        filtered = filtered.filter(product => 
+          product.title.toLowerCase().includes(searchLower) ||
+          product.description.toLowerCase().includes(searchLower)
+        );
+        hasActiveFilters = true;
       }
+
+      if (category) {
+        filtered = filtered.filter(product => product.category === category);
+        hasActiveFilters = true;
+      }
+
+      if (tag) {
+        filtered = filtered.filter(product => 
+          product.tags && product.tags.includes(tag)
+        );
+        hasActiveFilters = true;
+      }
+      
+      // Aplicar filtros avanzados
+      if (advancedFilters.minPrice > 0 || advancedFilters.maxPrice < maxPrice) {
+        filtered = filtered.filter(
+          product => product.price >= advancedFilters.minPrice && 
+                   product.price <= advancedFilters.maxPrice
+        );
+        hasActiveFilters = true;
+      }
+      
+      if (advancedFilters.selectedCategories.length > 0) {
+        filtered = filtered.filter(product => 
+          advancedFilters.selectedCategories.includes(product.category)
+        );
+        hasActiveFilters = true;
+      }
+      
+      if (advancedFilters.selectedTags.length > 0) {
+        filtered = filtered.filter(product => 
+          product.tags && product.tags.some(tag => 
+            advancedFilters.selectedTags.includes(tag)
+          )
+        );
+        hasActiveFilters = true;
+      }
+      
+      if (discounted || advancedFilters.onlyDiscounted) {
+        filtered = filtered.filter(product => 
+          product.discountPercentage && product.discountPercentage > 0
+        );
+        hasActiveFilters = true;
+      }
+      
+      // Actualizar estado de búsqueda y productos filtrados
+      setIsSearching(hasActiveFilters);
+      setFilteredProducts(hasActiveFilters ? filtered : []);
     }
-  }, [products, searchParams]);
+  }, [products, searchParams, advancedFilters, maxPrice]);
 
   useEffect(() => {
     let isMounted = true;
@@ -254,14 +301,70 @@ export default function Home() {
         )}
       </div>
       
-      {isSearching && filteredProducts.length > 0 && (
-        <div className="mt-8">
-          <CardContainer products={currentProducts} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+      {isSearching && (
+        <div className="mt-8 flex flex-col md:flex-row gap-6">
+          {/* Filtros avanzados */}
+          <div className="md:w-1/4">
+            <AdvancedFilters 
+              categories={categories}
+              tags={tags}
+              onFilterChange={setAdvancedFilters}
+              maxPrice={maxPrice}
+            />
+          </div>
+          
+          {/* Lista de productos */}
+          <div className="md:w-3/4">
+            {filteredProducts.length > 0 ? (
+              <>
+                <CardContainer products={currentProducts} />
+                {totalPages > 1 && (
+                  <div className="mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <p className="text-gray-600 text-lg mb-4">No se encontraron productos que coincidan con los filtros seleccionados.</p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button 
+                    onClick={() => {
+                      // Limpiar todos los filtros
+                      router.push('/');
+                      setAdvancedFilters({
+                        minPrice: 0,
+                        maxPrice: maxPrice,
+                        selectedCategories: [],
+                        selectedTags: [],
+                        onlyDiscounted: false
+                      });
+                    }}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Limpiar filtros
+                  </button>
+                  <button 
+                    onClick={() => {
+                      // Ajustar solo el rango de precios
+                      setAdvancedFilters(prev => ({
+                        ...prev,
+                        minPrice: 0,
+                        maxPrice: maxPrice
+                      }));
+                    }}
+                    className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                  >
+                    Ajustar solo precios
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
