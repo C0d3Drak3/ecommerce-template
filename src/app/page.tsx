@@ -266,6 +266,9 @@ export default function Home() {
     );
   }
 
+  // Determinar si hay una búsqueda activa basada en los parámetros de la URL
+  const hasActiveSearch = searchParams.toString().length > 0;
+
   return (
     <main className="container mx-auto px-4 py-8 bg-gray-600">
       <SearchFilters
@@ -274,112 +277,107 @@ export default function Home() {
         tags={tags}
       />
       
-      <div className={isSearching ? 'hidden' : 'block'}>
-        <Welcoming products={products} />
-        
-        {/* Sección de productos en descuento */}
-        {featuredDiscountedProducts.length > 0 && (
-          <div className="mt-12">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">🔥 Ofertas Especiales</h2>
-              <button 
-                onClick={() => {
-                  // Filtrar solo productos con descuento
-                  const params = new URLSearchParams();
-                  params.set('discounted', 'true');
-                  router.push(`/?${params.toString()}`);
+      {hasActiveSearch ? (
+        // Mostrar resultados de búsqueda y filtros avanzados
+        <div className="mt-8">
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Filtros avanzados */}
+            <div className="md:w-1/4">
+              <AdvancedFilters 
+                categories={categories}
+                tags={tags}
+                maxPrice={Math.max(...products.map(p => p.price), 1000)}
+                onFilterChange={(filters) => {
+                  setAdvancedFilters(prev => ({
+                    ...prev,
+                    minPrice: filters.minPrice,
+                    maxPrice: filters.maxPrice,
+                    selectedCategories: filters.selectedCategories || [],
+                    selectedTags: filters.selectedTags || [],
+                    onlyDiscounted: filters.onlyDiscounted || false
+                  }));
                 }}
-                className="text-blue-400 hover:text-blue-300 text-sm font-medium"
-              >
-                Ver todos los descuentos →
-              </button>
+              />
             </div>
-            <CardContainer 
-              products={featuredDiscountedProducts} 
-            />
-          </div>
-        )}
-      </div>
-      
-      {isSearching && (
-        <div className="mt-8 flex flex-col md:flex-row gap-6">
-          {/* Filtros avanzados */}
-          <div className="md:w-1/4">
-            <AdvancedFilters 
-              categories={categories}
-              tags={tags}
-              onFilterChange={setAdvancedFilters}
-              maxPrice={maxPrice}
-            />
-          </div>
-          
-          {/* Lista de productos */}
-          <div className="md:w-3/4">
-            {filteredProducts.length > 0 ? (
-              <>
-                <CardContainer products={currentProducts} />
-                {totalPages > 1 && (
-                  <div className="mt-8">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={setCurrentPage}
-                    />
+            
+            {/* Resultados de búsqueda */}
+            <div className="md:w-3/4">
+              {filteredProducts.length > 0 ? (
+                <>
+                  <CardContainer products={currentProducts} />
+                  {totalPages > 1 && (
+                    <div className="mt-8">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-12 bg-white rounded-lg shadow">
+                  <p className="text-gray-600 text-lg mb-4">No se encontraron productos que coincidan con los filtros seleccionados.</p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button 
+                      onClick={() => {
+                        // Limpiar todos los filtros
+                        router.push('/');
+                        setAdvancedFilters({
+                          minPrice: 0,
+                          maxPrice: maxPrice,
+                          selectedCategories: [],
+                          selectedTags: [],
+                          onlyDiscounted: false
+                        });
+                      }}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Limpiar filtros
+                    </button>
+                    <button 
+                      onClick={() => {
+                        // Ajustar solo el rango de precios
+                        setAdvancedFilters(prev => ({
+                          ...prev,
+                          minPrice: 0,
+                          maxPrice: maxPrice
+                        }));
+                      }}
+                      className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                    >
+                      Ajustar solo precios
+                    </button>
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12 bg-white rounded-lg shadow">
-                <p className="text-gray-600 text-lg mb-4">No se encontraron productos que coincidan con los filtros seleccionados.</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button 
-                    onClick={() => {
-                      // Limpiar todos los filtros
-                      router.push('/');
-                      setAdvancedFilters({
-                        minPrice: 0,
-                        maxPrice: maxPrice,
-                        selectedCategories: [],
-                        selectedTags: [],
-                        onlyDiscounted: false
-                      });
-                    }}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Limpiar filtros
-                  </button>
-                  <button 
-                    onClick={() => {
-                      // Ajustar solo el rango de precios
-                      setAdvancedFilters(prev => ({
-                        ...prev,
-                        minPrice: 0,
-                        maxPrice: maxPrice
-                      }));
-                    }}
-                    className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
-                  >
-                    Ajustar solo precios
-                  </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      )}
-
-      {isSearching && filteredProducts.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-600">No se encontraron productos que coincidan con tu búsqueda.</p>
-          <button 
-            onClick={() => {
-              setIsSearching(false);
-              setFilteredProducts([]);
-            }} 
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Volver al inicio
-          </button>
+      ) : (
+        // Mostrar contenido de bienvenida si no hay búsqueda activa
+        <div>
+          <Welcoming products={products} />
+          
+          {/* Sección de productos en descuento */}
+          {featuredDiscountedProducts.length > 0 && (
+            <div className="mt-12">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">🔥 Ofertas Especiales</h2>
+                <button 
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    params.set('discounted', 'true');
+                    router.push(`/?${params.toString()}`);
+                  }}
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+                >
+                  Ver todos los descuentos →
+                </button>
+              </div>
+              <CardContainer products={featuredDiscountedProducts} />
+            </div>
+          )}
         </div>
       )}
     </main>

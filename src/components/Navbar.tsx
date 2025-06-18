@@ -21,7 +21,8 @@ function NavbarContent() {
   };
 
   const handleHomeClick = () => {
-    router.push('/');
+    // Limpiar la URL y forzar un refresh completo para reiniciar el estado
+    window.location.href = '/';
   };
 
   return (

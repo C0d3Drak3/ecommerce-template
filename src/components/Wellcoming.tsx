@@ -8,9 +8,12 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  discountPercentage?: number;
   imageUrl: string;
+  thumbnailUrl: string;
   category: string;
   description: string;
+  tags?: string[];
 }
 
 interface WelcomingProps {
@@ -36,14 +39,34 @@ const Welcoming: React.FC<WelcomingProps> = ({ products }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <CardContainer 
-        products={featuredProducts} 
+        products={featuredProducts.map(p => ({
+          id: p.id,
+          title: p.title,
+          price: p.price,
+          discountPercentage: p.discountPercentage,
+          imageUrl: p.imageUrl,
+          thumbnailUrl: p.thumbnailUrl,
+          category: p.category,
+          description: p.description,
+          tags: p.tags
+        }))} 
         title="Productos Destacados" 
       />
       
       <div className="my-12 border-t border-gray-200" />
       
       <CardContainer 
-        products={recommendedProducts} 
+        products={recommendedProducts.map(p => ({
+          id: p.id,
+          title: p.title,
+          price: p.price,
+          discountPercentage: p.discountPercentage,
+          imageUrl: p.imageUrl,
+          thumbnailUrl: p.thumbnailUrl,
+          category: p.category,
+          description: p.description,
+          tags: p.tags
+        }))} 
         title="Otros Productos que te podrían interesar" 
       />
     </div>
