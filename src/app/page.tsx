@@ -49,6 +49,20 @@ export default function Home() {
     onlyDiscounted: false
   });
   
+  // Manejador de cambio de filtros avanzados
+  const handleAdvancedFilterChange = useCallback((filters: {
+    minPrice: number;
+    maxPrice: number;
+    selectedCategories: string[];
+    selectedTags: string[];
+    onlyDiscounted: boolean;
+  }) => {
+    setAdvancedFilters(prev => ({
+      ...prev,
+      ...filters
+    }));
+  }, []);
+
   // Calcular precio máximo de los productos
   const maxPrice = useMemo(() => {
     if (products.length === 0) return 1000;
@@ -63,15 +77,22 @@ export default function Home() {
   // Tomar solo los primeros 4 productos con descuento para mostrar en la sección destacada
   const featuredDiscountedProducts = discountedProducts.slice(0, 4);
 
-  const handleSearch = useCallback(({ searchTerm, category, tag }: FilterState) => {
+  const handleSearch = useCallback((searchTerm: string) => {
     const params = new URLSearchParams();
     if (searchTerm) params.set('search', searchTerm);
+    
+    // Mantener los filtros avanzados existentes
+    const category = searchParams.get('category');
+    const tag = searchParams.get('tag');
+    const discounted = searchParams.get('discounted');
+    
     if (category) params.set('category', category);
     if (tag) params.set('tag', tag);
+    if (discounted) params.set('discounted', discounted);
     
     const newUrl = params.toString() ? `/?${params.toString()}` : '/';
     router.push(newUrl);
-  }, [router]);
+  }, [router, searchParams]);
 
   // Effect to handle URL parameters and browser navigation
   // Effect to apply filters when products are loaded, URL changes, or advanced filters change
@@ -273,8 +294,6 @@ export default function Home() {
     <main className="container mx-auto px-4 py-8 bg-gray-600">
       <SearchFilters
         onSearch={handleSearch}
-        categories={categories}
-        tags={tags}
       />
       
       {hasActiveSearch ? (
@@ -287,16 +306,7 @@ export default function Home() {
                 categories={categories}
                 tags={tags}
                 maxPrice={Math.max(...products.map(p => p.price), 1000)}
-                onFilterChange={(filters) => {
-                  setAdvancedFilters(prev => ({
-                    ...prev,
-                    minPrice: filters.minPrice,
-                    maxPrice: filters.maxPrice,
-                    selectedCategories: filters.selectedCategories || [],
-                    selectedTags: filters.selectedTags || [],
-                    onlyDiscounted: filters.onlyDiscounted || false
-                  }));
-                }}
+                onFilterChange={handleAdvancedFilterChange}
               />
             </div>
             
