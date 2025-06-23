@@ -98,9 +98,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                 }}
                 className="absolute right-20 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 z-20"
                 aria-label="Limpiar búsqueda"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 10, y: -10 }}
+                animate={{ opacity: 1, x: -5, y: -10 }}
+                exit={{ opacity: 0, x: 10, y: -10 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

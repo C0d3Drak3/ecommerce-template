@@ -31,13 +31,17 @@ const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnail
   };
 
   return (
-    <div className="flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 w-full h-[400px]">
+    <div className="group relative flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 w-full h-[400px] overflow-hidden">
+      {/* Efecto de resplandor superior */}
+      <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-neon-blue/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+      {/* Sombra de resplandor */}
+      <div className="absolute inset-0 rounded-xl shadow-[inset_0_0_15px_rgba(59,130,246,0.2)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       <Link 
         href={`/product/${id}?back=${encodeURIComponent(currentUrl)}`}
         className="block"
         prefetch={false}
       >
-      <div className="relative h-48 mb-4 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+      <div className="relative h-48 mb-4 bg-gray-50 rounded-md overflow-hidden flex-shrink-0 group-hover:bg-white transition-colors duration-300">
         {/* Placeholder de carga */}
         {isLoading && !hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
@@ -69,7 +73,7 @@ const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnail
         </div>
       </div>
 
-      <div className="flex flex-col justify-between flex-grow min-h-0">
+      <div className="flex flex-col justify-between flex-grow min-h-0 relative z-10">
         <div className="space-y-2 flex-shrink overflow-hidden">
           <p className="text-sm text-gray-500 capitalize truncate">{category}</p>
           <h3 className="text-lg font-semibold line-clamp-2 min-h-[3.5rem] text-gray-950">{title}</h3>
