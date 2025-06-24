@@ -23,7 +23,7 @@ interface Transaction {
 }
 
 export default function AccountPage() {
-  const { user, isLoading: authLoading, logout } = useAuth();
+  const { user, isLoading: authLoading} = useAuth();
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,28 +89,25 @@ export default function AccountPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Información de la cuenta */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Mi Cuenta</h2>
-        <div className="space-y-4">
-          <div>
-            <p className="text-gray-600">Nombre:</p>
-            <p className="font-medium">{user.name}</p>
+          <h2 className="text-2xl font-semibold mb-4 text-neon-purple">Mi Cuenta</h2>
+        
+          <div className="space-y-4">
+            <div className='flex '>
+              <p className="text-gray-600">Nombre: </p>
+              <p className="font-medium text-blue-600">{user.name}</p>
+            </div>
+            <div className='flex '>
+              <p className="text-gray-600">Email: </p>
+              <p className="font-medium text-blue-600">{user.email}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-600">Email:</p>
-            <p className="font-medium">{user.email}</p>
-          </div>
-          <button
-            onClick={logout}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Cerrar Sesión
-          </button>
-        </div>
+          
+        
       </div>
 
       {/* Historial de compras */}
       <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-        <h2 className="text-2xl font-semibold mb-4">Historial de Compras</h2>
+        <h2 className="text-2xl text-neon-purple font-semibold mb-4">Historial de Compras</h2>
         
         {isLoading ? (
           <div className="text-center py-8">

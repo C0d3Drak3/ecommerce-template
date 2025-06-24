@@ -31,9 +31,9 @@ const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnail
   };
 
   return (
-    <div className="group relative flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 w-full h-[400px] overflow-hidden">
+    <div className="group relative flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 w-[300px] h-[400px] overflow-hidden">
       {/* Efecto de resplandor superior */}
-      <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-neon-blue/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+      <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-neon-purple/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
       {/* Sombra de resplandor */}
       <div className="absolute inset-0 rounded-xl shadow-[inset_0_0_15px_rgba(59,130,246,0.2)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       <Link 
