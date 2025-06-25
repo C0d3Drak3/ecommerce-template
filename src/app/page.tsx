@@ -367,8 +367,6 @@ export default function Home() {
       ) : (
         // Mostrar contenido de bienvenida si no hay búsqueda activa
         <div>
-          <Welcoming products={products} />
-          
           {/* Sección de productos en descuento */}
           {featuredDiscountedProducts.length > 0 && (
             <div className="mt-12">
@@ -388,6 +386,8 @@ export default function Home() {
               <CardContainer products={featuredDiscountedProducts} />
             </div>
           )}
+          <Welcoming products={products} />
+          
         </div>
       )}
     </main>

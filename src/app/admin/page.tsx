@@ -51,58 +51,67 @@ export default function AdminPage() {
         <LowStockAlerts />
       </div>
       
-      <h2 className="text-2xl font-semibold mb-6">Herramientas</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Gestión de Productos */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Gestión de Productos</h2>
-          <div className="space-y-4">
-            <button
-              onClick={() => router.push('/admin/products')}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Ver Productos
-            </button>
-            <button
-              onClick={() => router.push('/admin/products/new')}
-              className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
-            >
-              Agregar Producto
-            </button>
-          </div>
-        </div>
-
-        {/* Gestión de Promociones */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Promociones</h2>
-          <div className="space-y-4">
-            <button
-              onClick={() => router.push('/admin/sales')}
-              className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
-            >
-              Gestionar Descuentos
-            </button>
-            <button
-              onClick={() => router.push('/admin/promotions')}
-              className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
-            >
-              Crear Promoción
-            </button>
-          </div>
-        </div>
-
-        {/* Estadísticas */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Estadísticas</h2>
-          <div className="space-y-4">
-            <button
-              onClick={() => router.push('/admin/stats')}
-              className="w-full bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 transition-colors"
-            >
-              Ver Estadísticas
-            </button>
-          </div>
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">Herramientas de Administración</h2>
+        
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <ul className="divide-y divide-gray-200">
+            {/* Gestión de Productos */}
+            <li className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">Gestión de Productos</h3>
+                  <p className="text-sm text-gray-500">Administra el catálogo de productos</p>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => router.push('/admin/products')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    Ver Todo
+                  </button>
+                  <button
+                    onClick={() => router.push('/admin/products/new')}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+                  >
+                    Nuevo
+                  </button>
+                </div>
+              </div>
+            </li>
+            
+            {/* Gestión de Promociones */}
+            <li className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">Gestión de Promociones</h3>
+                  <p className="text-sm text-gray-500">Administra descuentos y ofertas</p>
+                </div>
+                <button
+                  onClick={() => router.push('/admin/sales')}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm"
+                >
+                  Gestionar
+                </button>
+              </div>
+            </li>
+            
+            {/* Gestión de Usuarios */}
+            <li className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">Gestión de Usuarios</h3>
+                  <p className="text-sm text-gray-500">Administra usuarios y permisos</p>
+                </div>
+                <button
+                  onClick={() => router.push('/admin/users')}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors text-sm"
+                >
+                  Administrar
+                </button>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

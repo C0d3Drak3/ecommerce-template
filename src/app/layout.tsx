@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import ShippingBanner from '@/components/ShippingBanner';
@@ -39,6 +40,7 @@ export default function RootLayout({
             <main className="min-h-[calc(100vh-64px)]">
               {children}
             </main>
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>
