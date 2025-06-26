@@ -24,7 +24,9 @@ export default function EditProductPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/admin/products/${params.id}`);
+        // Asegurarse de que el ID sea una cadena (en caso de que sea un array)
+        const productId = Array.isArray(params.id) ? params.id[0] : params.id;
+        const response = await fetch(`/api/admin/products/${productId}`);
         const data = await response.json();
 
         if (data.success) {

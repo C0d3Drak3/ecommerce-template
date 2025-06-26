@@ -57,8 +57,10 @@ async function verifyAdmin(request: Request) {
 // GET - Obtener un producto por ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  // Esperar a que los parámetros estén disponibles
+  const { id } = await Promise.resolve(context.params);
   const adminId = await verifyAdmin(request);
   if (!adminId) {
     return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
@@ -66,7 +68,7 @@ export async function GET(
 
   try {
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(params.id) }
+      where: { id: parseInt(id) }
     });
 
     if (!product) {
@@ -89,8 +91,10 @@ export async function GET(
 // PUT - Actualizar producto
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  // Esperar a que los parámetros estén disponibles
+  const { id } = await Promise.resolve(context.params);
   const adminId = await verifyAdmin(request);
   if (!adminId) {
     return NextResponse.json({ success: false, message: 'No autorizado' }, { status: 401 });
@@ -110,7 +114,7 @@ export async function PUT(
     
     // Validar que el producto existe
     const existingProduct = await prisma.product.findUnique({
-      where: { id: parseInt(params.id) }
+      where: { id: parseInt(id) }
     });
 
     if (!existingProduct) {
@@ -159,7 +163,7 @@ export async function PUT(
     try {
       // Actualizar el producto
       const updatedProduct = await prisma.product.update({
-        where: { id: parseInt(params.id) },
+        where: { id: parseInt(id) },
         data: updateData,
       });
 

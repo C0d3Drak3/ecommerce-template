@@ -8,7 +8,7 @@ interface Product {
   id: number;
   title: string;
   price: number;
-  discount: number;
+  discountPercentage: number;
   imageUrl: string;
   category: string;
 }
@@ -59,7 +59,7 @@ export default function DiscountsPage() {
 
   const startEditing = (product: Product) => {
     setEditingProduct(product.id);
-    setTempDiscount(product.discount || 0);
+    setTempDiscount(product.discountPercentage || 0);
   };
 
   const cancelEditing = () => {
@@ -248,7 +248,9 @@ export default function DiscountsPage() {
                       ) : (
                         <div className="flex items-center">
                           <FiTag className="h-4 w-4 text-gray-400 mr-1" />
-                          <span className="text-sm font-medium">{product.discount || 0}%</span>
+                          <span className={`text-sm font-medium ${product.discountPercentage > 0 ? 'text-red-500' : 'text-gray-900'}`}>
+                            {product.discountPercentage || 0}%
+                          </span>
                         </div>
                       )}
                     </td>
