@@ -19,25 +19,29 @@ interface Product {
 }
 
 export default function ProductsPage() {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    if (!isAuthLoading && !user) {
+      // Solo redirigir si ya se completó la carga y no hay usuario
+      router.push('/login?redirect=/admin/products');
       return;
     }
     
-    if (user.role !== 'ADMIN') {
+    if (!isAuthLoading && user && user.role !== 'ADMIN') {
+      // Solo redirigir si ya se completó la carga y el usuario no es admin
       router.push('/');
       return;
     }
 
-    fetchProducts();
-  }, [user, router]);
+    if (user) {
+      fetchProducts();
+    }
+  }, [user, isAuthLoading, router]);
 
   const fetchProducts = async () => {
     try {
@@ -79,7 +83,35 @@ export default function ProductsPage() {
     }
   };
 
-  if (!user || user.role !== 'ADMIN') {
+  // Mostrar carga mientras se verifica la autenticación o se cargan los productos
+  if (isAuthLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-300 rounded w-1/4"></div>
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={`skeleton-${i}`} className="h-16 bg-white rounded-lg shadow p-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-10 w-10 bg-gray-300 rounded"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-300 rounded w-32"></div>
+                      <div className="h-3 bg-gray-200 rounded w-24"></div>
+                    </div>
+                  </div>
+                  <div className="h-10 bg-gray-200 rounded w-24"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Verificar rol de administrador
+  if (user?.role !== 'ADMIN') {
     return null;
   }
 
@@ -95,12 +127,7 @@ export default function ProductsPage() {
         </button>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-gray-600">Cargando productos...</p>
-        </div>
-      ) : error ? (
+      {error ? (
         <div className="text-center py-8 text-red-600">{error}</div>
       ) : products.length === 0 ? (
         <div className="text-center py-8 text-gray-600">

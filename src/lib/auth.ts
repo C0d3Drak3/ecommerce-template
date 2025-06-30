@@ -1,16 +1,16 @@
 import { verify } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { prisma } from './prisma';
-import { parse } from 'cookie';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function getCurrentUser() {
   try {
-    const cookieStore = cookies();
-    const cookieHeader = cookieStore.toString();
-    const parsedCookies = parse(cookieHeader);
-    const authToken = parsedCookies['auth_token'];
+    const cookieHeader = cookies().toString();
+    const authToken = cookieHeader
+      .split(';')
+      .find(c => c.trim().startsWith('auth_token='))
+      ?.split('=')[1];
 
     if (!authToken) {
       return null;
@@ -24,11 +24,9 @@ export async function getCurrentUser() {
         id: true,
         name: true,
         email: true,
-        role: true
-      }
+        role: true,
+      },
     });
-
-
 
     return user;
   } catch (error) {

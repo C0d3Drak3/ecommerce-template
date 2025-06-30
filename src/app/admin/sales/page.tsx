@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FiSave, FiX, FiTag } from 'react-icons/fi';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -10,11 +11,13 @@ interface Product {
   price: number;
   discountPercentage: number;
   imageUrl: string;
+  thumbnail: string;
   category: string;
+  brand: string;
 }
 
 export default function DiscountsPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,18 +28,22 @@ export default function DiscountsPage() {
   const [tempDiscount, setTempDiscount] = useState(0);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
+    if (!isLoading && !user) {
+      // Solo redirigir si ya se completó la carga y no hay usuario
+      router.push('/login?redirect=/admin/sales');
       return;
     }
     
-    if (user.role !== 'ADMIN') {
+    if (!isLoading && user && user.role !== 'ADMIN') {
+      // Solo redirigir si ya se completó la carga y el usuario no es admin
       router.push('/');
       return;
     }
 
-    fetchProducts();
-  }, [user, router]);
+    if (user) {
+      fetchProducts();
+    }
+  }, [user, isLoading, router]);
 
   const fetchProducts = async () => {
     try {
@@ -103,7 +110,6 @@ export default function DiscountsPage() {
 
       if (!response.ok) {
         console.error('Error en la respuesta:', responseData);
-        // Si hay un mensaje de error en la respuesta, usarlo
         const errorMessage = responseData?.message || 
                              responseData?.error || 
                              `Error ${response.status}: ${response.statusText}`;
@@ -140,7 +146,8 @@ export default function DiscountsPage() {
     }).format(price);
   };
 
-  if (loading) {
+  // Mostrar carga mientras se verifica la autenticación o se cargan los productos
+  if (isLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-7xl mx-auto">
@@ -148,7 +155,7 @@ export default function DiscountsPage() {
             <div className="h-8 bg-gray-300 rounded w-1/4"></div>
             <div className="space-y-2">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-16 bg-white rounded-lg shadow p-4 flex items-center justify-between">
+                <div key={`skeleton-${i}`} className="h-16 bg-white rounded-lg shadow p-4 flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="h-10 w-10 bg-gray-300 rounded"></div>
                     <div className="space-y-2">
@@ -164,6 +171,11 @@ export default function DiscountsPage() {
         </div>
       </div>
     );
+  }
+
+  // Verificar rol de administrador
+  if (user?.role !== 'ADMIN') {
+    return null;
   }
 
   return (
@@ -215,8 +227,28 @@ export default function DiscountsPage() {
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <img className="h-10 w-10 rounded-md object-cover" src={product.imageUrl} alt={product.title} />
+                        <div className="flex-shrink-0 h-10 w-10 relative bg-gray-100 rounded-md overflow-hidden">
+                          <Image
+                            src={product.thumbnail || product.imageUrl}
+                            alt={product.title}
+                            width={40}
+                            height={40}
+                            className="object-cover"
+                            loading="lazy"
+                            unoptimized={process.env.NODE_ENV !== 'production'}
+                            onError={(e) => {
+                              // Fallback a imagen completa si el thumbnail falla
+                              const target = e.target as HTMLImageElement;
+                              if (target.src !== product.imageUrl) {
+                                target.onerror = null;
+                                target.src = product.imageUrl;
+                              } else {
+                                // Si la imagen completa también falla, mostrar placeholder
+                                target.onerror = null;
+                                target.src = '/placeholder-product.png';
+                              }
+                            }}
+                          />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{product.title}</div>

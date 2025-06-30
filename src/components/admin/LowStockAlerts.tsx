@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiAlertTriangle, FiChevronDown, FiChevronUp, FiPackage } from 'react-icons/fi';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -158,13 +159,22 @@ const LowStockAlerts = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               {product.thumbnail && (
-                                <div className="flex-shrink-0 h-10 w-10 mr-3">
-                                  <img
-                                    className="h-10 w-10 rounded-md object-cover"
-                                    src={product.thumbnail}
-                                    alt={product.title}
-                                  />
-                                </div>
+                                <div className="flex-shrink-0 h-10 w-10 relative mr-3">
+                                <Image
+                                  src={product.thumbnail}
+                                  alt={product.title}
+                                  width={40}
+                                  height={40}
+                                  className="rounded-md object-cover"
+                                  loading="lazy"
+                                  unoptimized={process.env.NODE_ENV !== 'production'}
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.onerror = null;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
                               )}
                               <div>
                                 <div className="text-sm font-medium text-gray-900">{product.title}</div>

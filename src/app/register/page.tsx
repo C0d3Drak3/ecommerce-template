@@ -11,6 +11,8 @@ export default function RegisterPage() {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +44,13 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (data.success) {
-        router.push('/login');
+        setSuccessMessage('¡Cuenta creada con éxito! Redirigiendo a inicio de sesión...');
+        setIsSuccess(true);
+        
+        // Redirigir después de 3 segundos
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
       } else {
         setError(data.message || 'Error al registrar usuario');
       }
@@ -63,6 +71,11 @@ export default function RegisterPage() {
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
               {error}
+            </div>
+          )}
+          {isSuccess && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+              {successMessage}
             </div>
           )}
           <div className="rounded-md shadow-sm -space-y-px">
@@ -131,9 +144,10 @@ export default function RegisterPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isSuccess}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Registrarse
+              {isSuccess ? 'Creando cuenta...' : 'Registrarse'}
             </button>
           </div>
         </form>
