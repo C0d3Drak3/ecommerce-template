@@ -71,14 +71,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   };
 
   return (
-    <div className="w-64 p-4 bg-white rounded-lg shadow-md">
+    <div className="w-64 p-4 bg-white text-slate-800 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold mb-4">Filtros Avanzados</h3>
       
       {/* Rango de precios */}
       <div className="mb-6">
         <h4 className="font-medium mb-2">Rango de precios</h4>
         <div className="space-y-2">
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-sm ">
             <span>${priceRange.min.toFixed(2)}</span>
             <span>${priceRange.max.toFixed(2)}</span>
           </div>

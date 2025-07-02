@@ -301,7 +301,7 @@ export default function Home() {
         <div className="mt-8">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Filtros avanzados */}
-            <div className="md:w-1/4">
+            <div className="md:w-1/4 mt-7">
               <AdvancedFilters 
                 categories={categories}
                 tags={tags}
@@ -367,26 +367,15 @@ export default function Home() {
       ) : (
         // Mostrar contenido de bienvenida si no hay búsqueda activa
         <div>
-          {/* Sección de productos en descuento */}
-          {featuredDiscountedProducts.length > 0 && (
-            <div className="mt-12">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">🔥 Ofertas Especiales</h2>
-                <button 
-                  onClick={() => {
-                    const params = new URLSearchParams();
-                    params.set('discounted', 'true');
-                    router.push(`/?${params.toString()}`);
-                  }}
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
-                >
-                  Ver todos los descuentos →
-                </button>
-              </div>
-              <CardContainer products={featuredDiscountedProducts} />
-            </div>
-          )}
-          <Welcoming products={products} />
+          <Welcoming 
+            products={products}
+            featuredDiscountedProducts={featuredDiscountedProducts}
+            onViewAllDiscounts={() => {
+              const params = new URLSearchParams();
+              params.set('discounted', 'true');
+              router.push(`/?${params.toString()}`);
+            }}
+          />
           
         </div>
       )}

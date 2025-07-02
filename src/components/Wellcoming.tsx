@@ -18,9 +18,15 @@ interface Product {
 
 interface WelcomingProps {
   products: Product[];
+  featuredDiscountedProducts?: Product[];
+  onViewAllDiscounts?: () => void;
 }
 
-const Welcoming: React.FC<WelcomingProps> = ({ products }) => {
+const Welcoming: React.FC<WelcomingProps> = ({ 
+  products, 
+  featuredDiscountedProducts = [],
+  onViewAllDiscounts = () => {}
+}) => {
   // Usamos useMemo para mantener los mismos productos entre renders
   const featuredProducts = useMemo(() => {
     if (!products.length) return [];
@@ -37,7 +43,26 @@ const Welcoming: React.FC<WelcomingProps> = ({ products }) => {
   }, [products]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
+      {/* Sección de productos en descuento */}
+      {featuredDiscountedProducts.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">🔥 Ofertas Especiales</h2>
+            <button 
+              onClick={onViewAllDiscounts}
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+            >
+              Ver todos los descuentos →
+            </button>
+          </div>
+          <CardContainer products={featuredDiscountedProducts} />
+        </div>
+      )}
+
+      <div className="my-12 border-t border-gray-200" />
+      
+      {/* Sección de productos destacados */}
       <CardContainer 
         products={featuredProducts.map(p => ({
           id: p.id,
@@ -55,6 +80,7 @@ const Welcoming: React.FC<WelcomingProps> = ({ products }) => {
       
       <div className="my-12 border-t border-gray-200" />
       
+      {/* Sección de productos recomendados */}
       <CardContainer 
         products={recommendedProducts.map(p => ({
           id: p.id,
