@@ -301,7 +301,7 @@ export default function Home() {
         <div className="mt-8">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Filtros avanzados */}
-            <div className="md:w-1/4 mt-7">
+            <div className="md:w-1/4 mt-8">
               <AdvancedFilters 
                 categories={categories}
                 tags={tags}

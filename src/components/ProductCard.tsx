@@ -31,7 +31,7 @@ const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnail
   };
 
   return (
-    <div className="group relative flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 max-w-[300px] h-[400px] overflow-hidden">
+    <div className="group relative flex flex-col bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer hover:scale-105 transform duration-300 max-w-[300px] h-[380px] overflow-hidden">
       {/* Efecto de resplandor superior */}
       <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-neon-purple/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
       {/* Sombra de resplandor */}
@@ -80,18 +80,13 @@ const ProductCard = ({ id, title, price, discountPercentage, imageUrl, thumbnail
           <div className="mt-2">
             {discountPercentage && discountPercentage > 0 ? (
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 line-through">${price.toFixed(2)}</span>
-                <span className="text-red-600 font-bold">${(price * (1 - (discountPercentage / 100))).toFixed(2)}</span>
+                <span className="text-gray-500 line-through text-sm">${price.toFixed(2)}</span>
+                <span className="text-red-600 font-bold text-xl">${(price * (1 - (discountPercentage / 100))).toFixed(2)}</span>
                 <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">-{discountPercentage}%</span>
               </div>
             ) : (
-              <span className="text-gray-900 font-medium">${price.toFixed(2)}</span>
+              <span className="text-gray-900 font-bold text-xl">${price.toFixed(2)}</span>
             )}
-          </div>
-        </div>
-        <div className="mt-auto pt-4 ">
-          <div className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-center">
-            Ver detalles
           </div>
         </div>
       </div>
