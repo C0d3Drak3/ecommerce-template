@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import RelatedProducts from './RelatedProducts';
 
 interface Product {
   id: number;
@@ -250,6 +251,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }: ProductDetailP
             )}
           </div>
         </div>
+      </div>
+
+      {/* Sección de productos relacionados */}
+      <div className="mt-16">
+        <RelatedProducts 
+          currentProductId={product.id}
+          tags={product.tags}
+          category={product.category}
+        />
       </div>
     </div>
   );
