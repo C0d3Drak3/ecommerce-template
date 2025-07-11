@@ -6,6 +6,7 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  brand: string; // Añadido para consistencia con ProductCard
   discountPercentage?: number;
   imageUrl: string;
   thumbnailUrl: string;

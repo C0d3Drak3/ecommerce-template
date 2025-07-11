@@ -12,30 +12,23 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Solo verificar la autenticación después de que se haya completado la carga inicial
     if (!authLoading && !user) {
       router.push('/login?redirect=/cart');
       return;
     }
-    
-    // Actualizar el estado de carga una vez que se completa la verificación
     if (!authLoading) {
       setIsLoading(false);
     }
   }, [user, router, authLoading]);
 
   const calculateItemPrice = (item: any) => {
-    return item.discountPercentage && item.discountPercentage > 0 
+    return item.discountPercentage && item.discountPercentage > 0
       ? item.price * (1 - item.discountPercentage / 100)
       : item.price;
   };
 
-  const subtotal = items.reduce((sum, item) => {
-    const itemPrice = calculateItemPrice(item);
-    return sum + itemPrice * item.quantity;
-  }, 0);
-
-  const total = subtotal; // Aquí podrías agregar impuestos, envío, etc. si es necesario
+  const subtotal = items.reduce((sum, item) => sum + calculateItemPrice(item) * item.quantity, 0);
+  const total = subtotal; // Placeholder for future fees
 
   const handleCheckout = async () => {
     try {
@@ -77,222 +70,102 @@ export default function CartPage() {
     }
   };
 
-  // Mostrar carga mientras se verifica la autenticación
+  const baseButtonClasses = "w-full px-4 py-3 rounded-lg font-semibold text-white transition-all duration-200 transform border-b-4 active:translate-y-px active:border-b-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900";
+  const primaryButtonClasses = `${baseButtonClasses} bg-blue-600 border-blue-800 hover:bg-blue-500 active:border-blue-700 focus:ring-blue-500`;
+  const secondaryButtonClasses = `${baseButtonClasses} bg-gray-600 border-gray-800 hover:bg-gray-500 active:border-gray-700 focus:ring-gray-500`;
+  const redButtonClasses = "px-2 py-2 rounded-full font-semibold text-white transition-all duration-200 transform border-b-4 active:translate-y-px active:border-b-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 bg-red-600 border-red-800 hover:bg-red-500 active:border-red-700 focus:ring-red-500";
+
   if (authLoading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
-  // Redirigir si no hay usuario (ya debería manejarse en el efecto)
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Carrito de Compras</h1>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Tu Carrito</h1>
 
-      {items.length === 0 ? (
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-medium text-gray-600 mb-4">
-            Tu carrito está vacío
-          </h2>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
-          >
-            Continuar Comprando
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Lista de productos */}
-          <div className="lg:col-span-2 space-y-4">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-6 bg-white p-4 rounded-lg shadow"
-              >
-                {/* Imagen */}
-                <div className="relative w-32 h-32 flex-shrink-0">
-                  <Image
-                    src={item.thumbnail}
-                    alt={item.title}
-                    fill
-                    className="object-contain rounded-md"
-                  />
-                </div>
-
-                {/* Detalles */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {item.title}
-                      </h3>
-                      <div className="space-y-1">
-                        {item.discountPercentage && item.discountPercentage > 0 ? (
-                          <>
-                            <p className="text-xl font-bold text-blue-600">
-                              ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
-                              <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-1.5 py-0.5 rounded">
-                                -{item.discountPercentage}%
-                              </span>
-                            </p>
-                            <p className="text-gray-500 text-sm line-through">
-                              ${item.price.toFixed(2)}
-                            </p>
-                          </>
-                        ) : (
-                          <p className="text-xl font-bold text-blue-600">
-                            ${item.price.toFixed(2)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-red-600 hover:bg-red-50 p-2 rounded-full transition"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Controles de cantidad */}
-                  <div className="flex items-center gap-2 mt-4  ">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      disabled={item.quantity <= 1}
-                      className="p-2 rounded-md hover:bg-blue-600 bg-blue-300 disabled:opacity-50"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M20 12H4"
-                        />
-                      </svg>
-                    </button>
-                    <span className="w-12 text-center text-lg font-medium text-gray-950">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-2 rounded-md hover:bg-blue-600 bg-blue-300"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v12m6-6H6"
-                        />
-                      </svg>
-                    </button>
-
-                    <div className="ml-auto text-right">
-                      <p className="text-lg font-medium text-gray-950">
-                        ${(calculateItemPrice(item) * item.quantity).toFixed(2)}
-                      </p>
-                      {item.discountPercentage && item.discountPercentage > 0 && (
-                        <p className="text-sm text-gray-500 line-through">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {items.length === 0 ? (
+          <div className="text-center py-20 bg-gray-800/50 rounded-2xl border border-white/10">
+             <svg className="mx-auto h-24 w-24 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <h2 className="mt-6 text-2xl font-semibold text-gray-300">Tu carrito está vacío</h2>
+            <p className="mt-2 text-gray-500">Parece que aún no has añadido nada. ¡Explora nuestros productos!</p>
+            <button onClick={() => router.push('/')} className={`${primaryButtonClasses} mt-8 !w-auto`}>
+              Explorar Productos
+            </button>
           </div>
-
-          {/* Resumen */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-lg shadow sticky top-4">
-              <h2 className="text-xl font-semibold mb-4 text-gray-950">Resumen de la Orden</h2>
-
-              <div className="space-y-3 mb-6">
-                <div className="space-y-2">
-                  {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
-                    <div className="bg-yellow-50 p-3 rounded-md mb-2">
-                      <p className="text-sm text-yellow-700">
-                        ¡Aprovechaste descuentos en tu compra!
-                      </p>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-gray-600">
-                    <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} productos)</span>
-                    <span>${items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}</span>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-2 space-y-4">
+              {items.map((item) => (
+                <div key={item.id} className="flex gap-4 bg-gray-800/50 p-4 rounded-lg border border-white/10 items-center">
+                  <div className="relative w-24 h-24 flex-shrink-0 bg-white/10 rounded-lg">
+                    <Image src={item.thumbnail} alt={item.title} layout="fill" className="object-contain p-2 rounded-lg" />
                   </div>
-                  {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Descuentos</span>
-                      <span>-${(items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - subtotal).toFixed(2)}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-100 truncate">{item.title}</h3>
+                    <p className="text-sm text-gray-400">{item.brand}</p>
+                    <div className="flex items-center gap-3 mt-3">
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1} className={`${secondaryButtonClasses} !p-0 w-8 h-8 flex items-center justify-center !rounded-full !border-2 disabled:opacity-50`}>-</button>
+                      <span className="w-8 text-center font-bold text-lg">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className={`${secondaryButtonClasses} !p-0 w-8 h-8 flex items-center justify-center !rounded-full !border-2`}>+</button>
                     </div>
-                  )}
+                  </div>
+                  <div className="text-right flex flex-col items-end justify-between h-full">
+                    <p className="text-lg font-bold text-blue-400">${(calculateItemPrice(item) * item.quantity).toFixed(2)}</p>
+                    {item.discountPercentage && item.discountPercentage > 0 && (
+                      <p className="text-sm text-gray-500 line-through">${(item.price * item.quantity).toFixed(2)}</p>
+                    )}
+                    <button onClick={() => removeFromCart(item.id)} className={`${redButtonClasses} !p-0 w-8 h-8 flex items-center justify-center mt-auto`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </div>
                 </div>
-                <div className="border-t pt-3 space-y-3">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Envío</span>
-                    <span>Gratis</span>
+              ))}
+            </div>
+
+            <div className="lg:col-span-1">
+              <div className="bg-gray-800/50 p-6 rounded-lg shadow-lg sticky top-8 border border-white/10">
+                <h2 className="text-2xl font-semibold mb-6">Resumen</h2>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-gray-300">
+                    <span>Subtotal sin descuento</span>
+                    <span>${items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-lg font-semibold text-gray-950">
-                    <span>Total</span>
-                    <div className="text-right">
-                      <p className="text-blue-600">${subtotal.toFixed(2)}</p>
-                      {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
-                        <p className="text-xs text-gray-500">
-                          Ahorraste ${(items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - subtotal).toFixed(2)}
-                        </p>
-                      )}
+                  {items.some(item => item.discountPercentage && item.discountPercentage > 0) && (
+                    <div className="flex justify-between text-green-400">
+                      <span>Descuentos</span>
+                      <span>-${(items.reduce((sum, item) => sum + item.price * item.quantity, 0) - subtotal).toFixed(2)}</span>
                     </div>
+                  )}
+                  <div className="flex justify-between text-gray-300">
+                    <span>Envío</span>
+                    <span className="text-green-400">Gratis</span>
                   </div>
+                  <div className="border-t border-white/10 my-4"></div>
+                  <div className="flex justify-between text-2xl font-bold text-white">
+                    <span>Total</span>
+                    <span className="text-blue-400">${total.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <button onClick={handleCheckout} className={primaryButtonClasses}>
+                    Proceder al Pago
+                  </button>
+                  <button onClick={() => router.push('/')} className={secondaryButtonClasses}>
+                    Seguir Comprando
+                  </button>
                 </div>
               </div>
-
-              <button
-                onClick={handleCheckout}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
-              >
-                Proceder al Pago
-              </button>
-
-              <button
-                onClick={() => router.push('/')}
-                className="w-full mt-4 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-medium transition"
-              >
-                Continuar Comprando
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

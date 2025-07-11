@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Welcoming from '@/components/Wellcoming';
 import CardContainer from '@/components/CardContainer';
-import SearchFilters from '@/components/SearchFilters';
+import HeroSection from '@/components/HeroSection';
 import AdvancedFilters from '@/components/AdvancedFilters';
 import Pagination from '@/components/Pagination';
 
@@ -12,6 +12,7 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  brand: string; // Añadido para consistencia
   discountPercentage?: number;
   description: string;
   imageUrl: string;
@@ -291,12 +292,11 @@ export default function Home() {
   const hasActiveSearch = searchParams.toString().length > 0;
 
   return (
-    <main className="container mx-auto px-4 py-8 bg-gray-600">
-      <SearchFilters
-        onSearch={handleSearch}
-      />
-      
-      {hasActiveSearch ? (
+    <main className="bg-white dark:bg-gray-900">
+      <HeroSection onSearch={handleSearch} />
+
+      <div id="products-section" className="container mx-auto px-4 py-8">
+        {hasActiveSearch ? (
         // Mostrar resultados de búsqueda y filtros avanzados
         <div className="mt-8">
           <div className="flex flex-col md:flex-row gap-6">
@@ -379,6 +379,7 @@ export default function Home() {
           
         </div>
       )}
+      </div>
     </main>
   );
 }

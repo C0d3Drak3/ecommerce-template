@@ -26,240 +26,149 @@ interface ProductDetailProps {
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product }: ProductDetailProps) => {
-  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(product.thumbnailUrl);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const { updateQuantity, refreshCart } = useCart();
   const { user } = useAuth();
   const router = useRouter();
 
+  const allImages = [product.imageUrl, ...(product.tags?.map((_, i) => `https://dummyimage.com/600x600/94a3b8/ffffff&text=Image+${i + 2}`) || [])];
+
+  const baseButtonClasses = "px-4 py-2 rounded-lg font-semibold text-white transition-all duration-200 transform border-b-4 active:translate-y-px active:border-b-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900";
+  const primaryButtonClasses = `${baseButtonClasses} bg-blue-600 border-blue-800 hover:bg-blue-500 active:border-blue-700 focus:ring-blue-500`;
+  const secondaryButtonClasses = `${baseButtonClasses} bg-gray-600 border-gray-800 hover:bg-gray-500 active:border-gray-700 focus:ring-gray-500`;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 bg-white">
-      <button
-        onClick={() => {
-          const urlParams = new URLSearchParams(window.location.search);
-          const backUrl = urlParams.get('back') || '/';
-          window.location.href = backUrl;
-        }}
-        className="mb-6 w-24 h-10 flex items-center justify-center rounded-lg bg-slate-400 text-blue-600 hover:text-blue-800 transition-colors duration-200"
-      >
-        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Volver
-      </button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Imagen del producto */}
-        <div className="relative h-96 md:h-[600px] group">
-          <div className="absolute inset-0 bg-gray-100 rounded-xl shadow-lg overflow-hidden">
-            {/* Thumbnail como placeholder */}
-            <Image
-              src={product.thumbnailUrl}
-              alt={`${product.title} (thumbnail)`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-              className={`rounded-xl object-contain transition-opacity duration-500 ${!isImageLoading ? 'opacity-0' : 'opacity-100'}`}
-              priority
-            />
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <button
+          onClick={() => router.back()}
+          className={`${secondaryButtonClasses} mb-8 inline-flex items-center`}
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Volver
+        </button>
 
-            {/* Imagen principal de alta resolución */}
-            <Image
-              src={product.imageUrl}
-              alt={product.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-              className={`rounded-xl object-contain  ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
-              onLoadingComplete={() => {
-                // Cuando la imagen principal se carga, la mostramos y ocultamos el thumbnail
-                setIsImageLoading(false);
-              }}
-              onError={() => {
-                // Si la imagen principal falla, mantenemos el thumbnail visible
-                setIsImageLoading(true);
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Detalles del producto */}
-        <div className="space-y-8 px-4">
-          <div>
-            <p className="text-sm text-blue-600 font-semibold tracking-wide uppercase">{product.category}</p>
-            <h1 className="text-4xl font-bold mt-2 text-gray-900">{product.title}</h1>
-            <p className="text-gray-600 mt-4 leading-relaxed">{product.description}</p>
+        <div className="bg-gray-800/50 rounded-2xl shadow-2xl p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 border border-white/10">
+          {/* Galería de Imágenes */}
+          <div className="flex flex-col gap-4">
+            <div className="relative h-80 md:h-96 group rounded-xl overflow-hidden">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition duration-500"></div>
+              <div className="relative w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
+                <Image
+                  key={selectedImage} // Re-trigger load on image change
+                  src={selectedImage}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-4"
+                  priority
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 justify-center">
+              {allImages.slice(0, 5).map((img, index) => (
+                <button key={index} onClick={() => setSelectedImage(img)} className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-blue-500 scale-110' : 'border-transparent hover:border-blue-500/50'}`}>
+                  <Image src={img} alt={`Thumbnail ${index + 1}`} width={80} height={80} className="object-cover w-full h-full" loading="lazy" sizes="80px" />
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <div className="bg-gray-50 p-6 rounded-lg">
+          {/* Detalles del Producto */}
+          <div className="flex flex-col justify-center space-y-6">
+            <div>
+              <p className="text-sm text-blue-400 font-semibold tracking-wide uppercase">{product.category}</p>
+              <h1 className="text-4xl lg:text-5xl font-bold mt-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{product.title}</h1>
+              <p className="text-gray-400 mt-4 leading-relaxed">{product.description}</p>
+            </div>
+
+            <div className="bg-gray-900/70 p-6 rounded-lg border border-white/10">
               {product.discountPercentage && product.discountPercentage > 0 ? (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <p className="text-4xl font-bold text-blue-600">
+                  <div className="flex items-baseline gap-3">
+                    <p className="text-4xl font-bold text-blue-400">
                       ${(product.price * (1 - product.discountPercentage / 100)).toFixed(2)}
                     </p>
-                    <span className="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded">
+                    <p className="text-xl text-gray-500 line-through">${product.price.toFixed(2)}</p>
+                    <span className="bg-red-500/20 text-red-300 text-sm font-medium px-2.5 py-1 rounded-full">
                       -{product.discountPercentage}%
                     </span>
-                    
-                    {/* Indicador de stock bajo */}
-                    {product.stock > 0 && product.stock <= 5 && (
-                      <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center">
-                        <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
-                        ¡Solo quedan {product.stock} {product.stock === 1 ? 'unidad' : 'unidades'}!
-                      </span>
-                    )}
                   </div>
-                  <p className="text-gray-500 line-through">
-                    ${product.price.toFixed(2)}
-                  </p>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
-                  <p className="text-2xl font-bold text-gray-900">
-                    ${product.price.toFixed(2)}
-                  </p>
-                  
-                  {/* Indicador de stock bajo para productos sin descuento */}
-                  {product.stock > 0 && product.stock <= 5 && (
-                    <span className="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center">
-                      <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
-                      ¡Solo quedan {product.stock} {product.stock === 1 ? 'unidad' : 'unidades'}!
-                    </span>
-                  )}
-                </div>
+                <p className="text-4xl font-bold text-blue-400">${product.price.toFixed(2)}</p>
               )}
-              <p className="text-sm text-gray-600 mt-2 flex items-center">
-                <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-                Stock disponible: {product.stock} unidades
-              </p>
             </div>
-          </div>
 
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="px-4 py-2 text-xl text-gray-600 hover:bg-gray-50 transition-colors duration-200 border-r-2 border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={quantity <= 1}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value) || 1;
-                  setQuantity(Math.min(Math.max(1, val), product.stock));
-                }}
-                className="w-20 text-center py-2 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                min="1"
-                max={product.stock}
-              />
-              <button
-                onClick={() => setQuantity(Math.min(quantity + 1, product.stock))}
-                className="px-4 py-2 text-xl text-gray-600 hover:bg-gray-50 transition-colors duration-200 border-l-2 border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={quantity >= product.stock}
-              >
-                +
-              </button>
-            </div>
-            <button 
-              onClick={async () => {
-                if (!user) {
-                  router.push('/login');
-                  return;
-                }
-
-                setIsAdding(true);
-                try {
-                  await updateQuantity(product.id, quantity);
-                  await refreshCart();
-                  
-                  // Mostrar mensaje de éxito
-                  const message = document.createElement('div');
-                  message.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-500 translate-y-0';
-                  message.textContent = '¡Producto agregado al carrito!';
-                  document.body.appendChild(message);
-
-                  // Remover mensaje después de 3 segundos
-                  setTimeout(() => {
-                    message.style.transform = 'translateY(200%)';
-                    setTimeout(() => {
-                      document.body.removeChild(message);
-                    }, 500);
-                  }, 3000);
-
-                } catch (error) {
-                  console.error('Error adding to cart:', error);
-                } finally {
-                  setIsAdding(false);
-                }
-              }}
-              disabled={isAdding}
-              className="flex-1 bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transform transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:scale-100 disabled:hover:shadow-none"
-            >
-              {isAdding ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Agregando...
-                </span>
-              ) : (
-                'Agregar al carrito'
-              )}
-            </button>
-          </div>
-
-          <div className="border-t border-gray-200 pt-8">
-            <h3 className="font-semibold text-lg mb-4 text-gray-900">Detalles adicionales:</h3>
-            <p className="text-gray-600 flex items-center">
-              <span className="font-medium text-gray-800 mr-2">Marca:</span>
-              {product.brand}
-            </p>
-            {product.tags && product.tags.length > 0 && (
-              <div className="mt-4">
-                <p className="font-medium text-gray-800 mb-2">Etiquetas:</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors duration-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className={`${secondaryButtonClasses} !p-0 w-10 h-10 flex items-center justify-center !rounded-full !border-2`}>-</button>
+                <span className="w-12 text-center text-2xl font-bold">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} className={`${secondaryButtonClasses} !p-0 w-10 h-10 flex items-center justify-center !rounded-full !border-2`}>+</button>
               </div>
-            )}
+              <button
+                onClick={async () => {
+                  if (!user) {
+                    router.push('/login');
+                    return;
+                  }
+
+                  setIsAdding(true);
+                  try {
+                    await updateQuantity(product.id, quantity);
+                    await refreshCart();
+                    
+                    // Mostrar mensaje de éxito
+                    const message = document.createElement('div');
+                    message.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-500 translate-y-0';
+                    message.textContent = '¡Producto agregado al carrito!';
+                    document.body.appendChild(message);
+
+                    // Remover mensaje después de 3 segundos
+                    setTimeout(() => {
+                      message.style.transform = 'translateY(200%)';
+                      setTimeout(() => {
+                        document.body.removeChild(message);
+                      }, 500);
+                    }, 3000);
+
+                  } catch (error) {
+                    console.error('Error adding to cart:', error);
+                  } finally {
+                    setIsAdding(false);
+                  }
+                }}
+                disabled={isAdding}
+                className={`${primaryButtonClasses} flex-1`}
+              >
+                {isAdding ? 'Agregando...' : 'Agregar al carrito'}
+              </button>
+            </div>
+
+            <div className="border-t border-white/10 pt-6">
+              <h3 className="font-semibold text-lg mb-4 text-gray-200">Detalles Adicionales</h3>
+              <p className="text-gray-400"><span className="font-medium text-gray-300">Marca:</span> {product.brand}</p>
+              {product.tags && product.tags.length > 0 && (
+                <div className="mt-4">
+                  <p className="font-medium text-gray-300 mb-2">Etiquetas:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {product.tags.map((tag, index) => (
+                      <span key={index} className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Sección de productos relacionados */}
-      <div className="mt-16">
-        <RelatedProducts 
-          currentProductId={product.id}
-          tags={product.tags}
-          category={product.category}
-        />
+        <div className="mt-24">
+          <RelatedProducts currentProductId={product.id} tags={product.tags} category={product.category} />
+        </div>
       </div>
     </div>
   );

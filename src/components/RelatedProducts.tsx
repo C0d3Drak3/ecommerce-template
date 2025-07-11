@@ -7,6 +7,7 @@ interface Product {
   id: number;
   title: string;
   price: number;
+  brand: string;
   discountPercentage?: number;
   imageUrl: string;
   thumbnailUrl: string;
@@ -83,15 +84,7 @@ export default function RelatedProducts({ currentProductId, tags, category }: Re
           
           return (
             <div key={product.id} className="h-full">
-              <ProductCard
-                id={product.id}
-                title={product.title}
-                price={product.price}
-                discountPercentage={product.discountPercentage}
-                imageUrl={safeImageUrl}
-                thumbnailUrl={safeThumbnailUrl}
-                category={product.category}
-              />
+              <ProductCard {...product} imageUrl={safeImageUrl} thumbnailUrl={safeThumbnailUrl} />
             </div>
           );
         })}
