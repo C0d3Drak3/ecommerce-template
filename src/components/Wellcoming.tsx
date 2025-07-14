@@ -64,13 +64,13 @@ const Welcoming: React.FC<WelcomingProps> = ({
           animate="visible"
           variants={sectionVariants}
           whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300 } }}
-          className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 group"
+          className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 md:p-6 group"
         >
           <motion.div 
-            className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-75 transition-opacity duration-300"
+            className="md:absolute md:-inset-1 md:bg-gradient-to-r md:from-blue-400 md:to-purple-500 md:rounded-2xl md:opacity-0 md:group-hover:opacity-75 md:transition-opacity md:duration-300"
             style={{ filter: 'blur(16px)', zIndex: -1 }}
           />
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-4">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
               <span className="text-red-500 mr-3">🔥</span> Ofertas Especiales
             </h2>
@@ -93,10 +93,10 @@ const Welcoming: React.FC<WelcomingProps> = ({
         animate="visible"
         variants={sectionVariants}
         whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300 } }}
-        className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 group"
+        className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 md:p-6 group"
       >
         <motion.div 
-          className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-75 transition-opacity duration-300"
+          className="md:absolute md:-inset-1 md:bg-gradient-to-r md:from-blue-400 md:to-purple-500 md:rounded-2xl md:opacity-0 md:group-hover:opacity-75 md:transition-opacity md:duration-300"
           style={{ filter: 'blur(16px)', zIndex: -1 }}
         />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -114,10 +114,10 @@ const Welcoming: React.FC<WelcomingProps> = ({
         variants={sectionVariants}
         transition={{ delay: 0.1 }}
         whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300 } }}
-        className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 group"
+        className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 md:p-6 group"
       >
         <motion.div 
-          className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-75 transition-opacity duration-300"
+          className="md:absolute md:-inset-1 md:bg-gradient-to-r md:from-blue-400 md:to-purple-500 md:rounded-2xl md:opacity-0 md:group-hover:opacity-75 md:transition-opacity md:duration-300"
           style={{ filter: 'blur(16px)', zIndex: -1 }}
         />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">

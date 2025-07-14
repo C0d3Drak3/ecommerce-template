@@ -10,6 +10,7 @@ function NavbarContent() {
   const router = useRouter();
   const { user, isLoading, logout } = useAuth();
   const { items, openModal } = useCart();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -21,7 +22,6 @@ function NavbarContent() {
   };
 
   const handleHomeClick = () => {
-    // Limpiar la URL y forzar un refresh completo para reiniciar el estado
     window.location.href = '/';
   };
 
@@ -31,74 +31,60 @@ function NavbarContent() {
   const greenButtonClasses = `${baseButtonClasses} bg-green-600 border-green-800 hover:bg-green-500 active:border-green-700 focus:ring-green-500`;
   const redButtonClasses = `${baseButtonClasses} bg-red-600 border-red-800 hover:bg-red-500 active:border-red-700 focus:ring-red-500`;
 
+  const navLinks = (
+    <div className={`flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 w-full md:w-auto`}>
+      {isLoading ? (
+        <div className="animate-pulse flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+          <div className="h-10 w-32 bg-gray-700 rounded-lg"></div>
+          <div className="h-10 w-32 bg-gray-700 rounded-lg"></div>
+        </div>
+      ) : user ? (
+        <>
+          <button onClick={openModal} className={`${primaryButtonClasses} relative w-full md:w-auto`}>
+            🛒 Carrito
+            {items.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-gray-900">
+                {items.length}
+              </span>
+            )}
+          </button>
+          <Link href="/account" className={`${secondaryButtonClasses} w-full md:w-auto text-center`}>Mi Cuenta</Link>
+          {user.role === 'ADMIN' && (
+            <Link href="/admin" className={`${greenButtonClasses} w-full md:w-auto text-center`}>Panel Admin</Link>
+          )}
+          <button onClick={handleLogout} className={`${redButtonClasses} w-full md:w-auto`}>Cerrar Sesión</button>
+        </>
+      ) : (
+        <>
+          <Link href="/login" className={`${secondaryButtonClasses} w-full md:w-auto text-center`}>Iniciar Sesión</Link>
+          <Link href="/register" className={`${primaryButtonClasses} w-full md:w-auto text-center`}>Registrarse</Link>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-sm text-white p-4 shadow-lg border-b border-white/10">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <button 
-          onClick={handleHomeClick}
-          className="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 hover:opacity-90 transition-opacity"
-        >
-          E-Commerce Template
+        <button onClick={handleHomeClick} className="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 hover:opacity-90 transition-opacity">
+          E-Commerce
         </button>
-        
-        <div className="flex items-center space-x-4">
-          {isLoading ? (
-            <div className="animate-pulse flex space-x-4">
-              <div className="h-10 w-24 bg-gray-700 rounded-lg"></div>
-              <div className="h-10 w-24 bg-gray-700 rounded-lg"></div>
-            </div>
-          ) : user ? (
-            <>
-              <button 
-                onClick={openModal}
-                className={`${primaryButtonClasses} relative`}
-              >
-                🛒 Carrito
-                {items.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-gray-900">
-                    {items.length}
-                  </span>
-                )}
-              </button>
-              <Link
-                href="/account"
-                className={secondaryButtonClasses}
-              >
-                Mi Cuenta
-              </Link>
-              {user.role === 'ADMIN' && (
-                <Link
-                  href="/admin"
-                  className={greenButtonClasses}
-                >
-                  Panel Admin
-                </Link>
-              )}
-              <button
-                onClick={handleLogout}
-                className={redButtonClasses}
-              >
-                Cerrar Sesión
-              </button>
-            </>
-          ) : (
-            <>
-              <Link 
-                href="/login" 
-                className={secondaryButtonClasses}
-              >
-                Iniciar Sesión
-              </Link>
-              <Link 
-                href="/register" 
-                className={primaryButtonClasses}
-              >
-                Registrarse
-              </Link>
-            </>
-          )}
+        <div className="hidden md:flex md:items-center md:space-x-4">
+          {navLinks}
+        </div>
+        <div className="md:hidden">
+          <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}></path>
+            </svg>
+          </button>
         </div>
       </div>
+      {isOpen && (
+        <div className="md:hidden mt-4">
+          {navLinks}
+        </div>
+      )}
     </nav>
   );
 }

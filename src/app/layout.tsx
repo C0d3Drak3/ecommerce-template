@@ -37,7 +37,7 @@ export default function RootLayout({
           <CartProvider>
             <ShippingBanner />
             <Navbar />
-            <main className="min-h-[calc(100vh-64px)]">
+            <main className="min-h-[calc(100vh-64px)] max-w-[700px] md:max-w-7xl mx-auto px-4">
               {children}
             </main>
             <Footer />
