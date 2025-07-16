@@ -10,11 +10,11 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
 
   return (
-    <div className="relative text-white py-20 md:py-32 px-4 overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900/50 to-purple-900/50">
+    <div className="relative text-white py-12 md:py-12 px-4 overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900/50 to-purple-900/50">
       <div className="absolute inset-0 bg-black/30 z-10"></div>
       <div className="relative max-w-4xl mx-auto text-center z-20">
         <motion.h1 
-          className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400"
+          className="text-2xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -22,12 +22,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSearch }) => {
           Encuentra Tu Próximo Gadget Favorito
         </motion.h1>
         <motion.p 
-          className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8"
+          className="text-md md:text-xl text-gray-300 max-w-[600px] mx-auto mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Explora nuestra colección curada de los mejores productos tecnológicos del mercado. Calidad, innovación y los mejores precios, todo en un solo lugar.
+          Explora nuestra colección curada de los mejores productos del mercado. Calidad, innovación y los mejores precios, todo en un solo lugar.
         </motion.p>
         
         <div className="max-w-2xl mx-auto mb-10">

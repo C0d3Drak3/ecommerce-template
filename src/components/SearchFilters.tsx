@@ -37,7 +37,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full p-4 pl-12 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full md:rounded-r-none shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full p-4 pl-12 pr-12 text-gray-700 bg-white border border-gray-300 rounded-full md:rounded-r-none shadow-sm focus:outline-none focus:shadow-neon-xl focus:border-transparent transition-all"
             placeholder="Buscar productos..."
             aria-label="Buscar productos"
           />
@@ -49,7 +49,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
                   setSearchTerm('');
                   onSearch('');
                 }}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 z-10"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 -mt-[9px] text-gray-400 hover:text-gray-600 z-10"
                 aria-label="Limpiar búsqueda"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}

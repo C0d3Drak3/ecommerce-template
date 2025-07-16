@@ -71,14 +71,16 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   };
 
   return (
-    <div className="w-64 p-4 bg-white text-slate-800 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4">Filtros Avanzados</h3>
+    <div className="w-64 p-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-2xl shadow-lg">
+      <h3 className="text-xl font-bold mb-6 flex items-center">
+        <span className="text-purple-500 mr-2">⚙️</span> Filtros Avanzados
+      </h3>
       
       {/* Rango de precios */}
       <div className="mb-6">
-        <h4 className="font-medium mb-2">Rango de precios</h4>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm ">
+        <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">Rango de precios</h4>
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
             <span>${priceRange.min.toFixed(2)}</span>
             <span>${priceRange.max.toFixed(2)}</span>
           </div>
@@ -88,7 +90,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             max={safeMaxPrice}
             value={priceRange.min}
             onChange={(e) => setPriceRange(prev => ({ ...prev, min: Math.min(Number(e.target.value), prev.max) }))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full appearance-none cursor-pointer"
           />
           <input
             type="range"
@@ -96,24 +98,24 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             max={safeMaxPrice}
             value={priceRange.max}
             onChange={(e) => setPriceRange(prev => ({ ...prev, max: Math.max(Number(e.target.value), prev.min) }))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full appearance-none cursor-pointer"
           />
         </div>
       </div>
 
       {/* Categorías */}
       <div className="mb-6">
-        <h4 className="font-medium mb-2">Categorías</h4>
-        <div className="space-y-2 max-h-40 overflow-y-auto">
+        <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">Categorías</h4>
+        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
           {categories.map(category => (
             <label key={category} className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 checked={selectedCategories.includes(category)}
                 onChange={() => toggleCategory(category)}
-                className="rounded text-blue-600"
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
               />
-              <span>{category}</span>
+              <span className="text-gray-700 dark:text-gray-300">{category}</span>
             </label>
           ))}
         </div>
@@ -121,8 +123,8 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
       {/* Etiquetas */}
       <div className="mb-6">
-        <h4 className="font-medium mb-2">Etiquetas</h4>
-        <div className="space-y-2 max-h-40 overflow-y-auto">
+        <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">Etiquetas</h4>
+        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
           {tags.map(tag => (
             <label key={tag} className="flex items-center space-x-2">
               <input
@@ -138,15 +140,15 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
       </div>
 
       {/* Solo con descuento */}
-      <div className="mb-4">
-        <label className="flex items-center space-x-2">
+      <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <label className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors cursor-pointer">
           <input
             type="checkbox"
             checked={onlyDiscounted}
             onChange={(e) => setOnlyDiscounted(e.target.checked)}
-            className="rounded text-blue-600"
+            className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
           />
-          <span>Mostrar solo ofertas</span>
+          <span className="font-medium text-gray-800 dark:text-gray-200">Mostrar solo ofertas</span>
         </label>
       </div>
     </div>

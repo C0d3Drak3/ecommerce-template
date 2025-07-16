@@ -71,7 +71,7 @@ const Welcoming: React.FC<WelcomingProps> = ({
             style={{ filter: 'blur(16px)', zIndex: -1 }}
           />
           <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
               <span className="text-red-500 mr-3">🔥</span> Ofertas Especiales
             </h2>
             <motion.button 
@@ -99,7 +99,7 @@ const Welcoming: React.FC<WelcomingProps> = ({
           className="md:absolute md:-inset-1 md:bg-gradient-to-r md:from-blue-400 md:to-purple-500 md:rounded-2xl md:opacity-0 md:group-hover:opacity-75 md:transition-opacity md:duration-300"
           style={{ filter: 'blur(16px)', zIndex: -1 }}
         />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
           <span className="text-blue-500 mr-3">✨</span> Productos Destacados
         </h2>
         <CardContainer 
@@ -120,7 +120,7 @@ const Welcoming: React.FC<WelcomingProps> = ({
           className="md:absolute md:-inset-1 md:bg-gradient-to-r md:from-blue-400 md:to-purple-500 md:rounded-2xl md:opacity-0 md:group-hover:opacity-75 md:transition-opacity md:duration-300"
           style={{ filter: 'blur(16px)', zIndex: -1 }}
         />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
           <span className="text-green-500 mr-3">🚀</span> Otros Productos que te podrían interesar
         </h2>
         <CardContainer 
